@@ -1,0 +1,55 @@
+Version		Description
+--------------------------------------------------------------
+1.2.1		- Released 980318.
+		- Some people ended up with a copy of the login
+		  window during the X session. This is now solved.
+		- Spaces are now accepted by the input fields.
+		- Changed default X server to /usr/X11R6/bin/X 
+
+1.2.0		- Released 980312.
+		- Login.app handles the start up of the X-server now 
+		  this means that xinit is no longer needed.
+		- Reboot/halt conflict with gpm solved.
+		- No garbage characters are displayed when pressing
+		  shift, ctrl or alt. This used to occured under some 
+		  systems.
+		- Added some more defines (compile-time options) in
+		  the Config.h (DEFAULT_PATH, DEFAULT_DISPLAY,
+		  DEFAULT_XSERVER, ROOTWINDOW_COLOR, CONSOLE_BGCOLOR, 
+		  CONSOLE_FGCOLOR).
+		- Added option -n (-noanimations). This will disable
+		  the panel animations and can be nice to use if your
+		  machine is very slow.
+
+1.1.2		- Released 980211.
+		- Added better error messages when xpm image fails
+		  to load.
+		- The console login window has now by default
+		  black text on a white background.
+		- Changed HALT_CMD and REBOOT_CMD to use /sbin/shutdown.
+		- Minor changes to Imakefile.
+
+1.1.1		- Released 980209.
+		- Glibc2 support.
+
+1.1.0		- Released 980208.
+		- New graphics.
+		- The console login window is now auto-resized.
+		  to fit any screensize.
+		- The panel now makes a shrink-animation before 
+		  closing.
+		- A message is now displyed in the top-left corner
+		  on reboot and halt.  
+		- Added build script.
+
+1.0.2	 	- Released 980125.
+		- Added support for shadow passwords.
+                - Minor changes to halt/reboot code, again!
+
+1.0.1		- Released 971214.
+		- Minor changes to halt/reboot code.
+		- Minor changes to client termination code.
+
+1.0.0		- Released 971212.
+		- First official version.
+

@@ -1,0 +1,75 @@
+Installation instructions for Login.app
+
+
+NOTE!
+--------------------------------------------------------------
+Installing this program requires root access and should only
+be done by people who is familiar with the system /etc/inittab
+file. Since installing requires you to make changes in this
+file, as described below, it is important that you know what 
+these changes does to your system. If you edit this file in 
+a completely wrong way your computer may not boot correctly 
+any more. You should be aware of this!
+
+
+
+Requirenemts
+--------------------------------------------------------------
+- libXpm 4.9 (or newer)
+	Not tested with older versions than 4.9.
+	Older versions may or may not work!
+	Available at ftp://sunsite.unc.edu/pub/Linux/libs/X/
+
+- root access
+	To be able to complete the installation you need to
+	make changes in the system /etc/inittab file.
+
+
+
+Installation
+--------------------------------------------------------------
+1) If needed, edit Config.h to fit your system
+
+	- If you want to change the default path set by Login.app you
+	  can modify DEFAULT_PATH in Config.h.
+
+	- By default the ~/.xinitrc file is executed when a user is 
+	  logging in. If you want a different file to be executed 
+	  change the LOGIN_CMD in Config.h. 
+
+	- If your system is not a Linux system you maybe need to change
+	  the HALT_CMD and REBOOT_CMD in Config.h.
+
+2) % ./build
+3) % su
+4) % cp Login.app /usr/local/bin
+5) Edit /etc/inittab to look something like this:
+
+	[...]
+	id:5:initdefault:
+	[...]
+	x:5:respawn:/usr/local/bin/Login.app >& /dev/null
+
+	The ">& /dev/null" will redirect all the messages printed by 
+	the X-server to /dev/null (all the messages will be thrown
+	away).  
+
+	NOTE! These changes discribes how a RedHat 4.2/5.0 Linux system
+	could be configured. It could look a little bit different on
+	other unix platforms. For example on a Slackware Linux system
+	it looks like this:
+
+	[...]
+	id:4:initdefault:
+	[...]
+	x1:4:respawn:/usr/local/bin/Login.app >& /dev/null
+
+	ALSO NOTE! Before you modify your /etc/inittab make sure that
+	your X-server is configured correctly and that Login.app is 
+	working ok. Log in as root and execute the same line you will 
+	put in your /etc/inittab from the console, for example:
+	/usr/local/bin/Login.app, this way you can avoid unpleasant
+	respawns of the X-server if something isn't working correctly. 
+
+6) % exit
+7) Reboot your system! (or just switch runlevel)

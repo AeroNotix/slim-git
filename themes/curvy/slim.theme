@@ -1,0 +1,24 @@
+# 'curvy' theme for SLiM by Simone Rota
+
+msg_color               #FFFFFF
+msg_font                Verdana:size=16:bold
+
+background_style        tile
+
+input_panel_x           50%
+input_panel_y           45%
+input_name_x            158
+input_name_y            164
+input_pass_x            158
+input_pass_y            198
+input_font          	Verdana:size=12
+input_bgcolor           #FFFFFF
+input_fgcolor           #000000
+
+welcome_x               100
+welcome_y               60
+
+welcome_color           #000000
+welcome_font            Verdana:size=12:bold
+
+

@@ -1,0 +1,21 @@
+INSTALL file for SLiM
+
+0. Prerequisites:
+ - X.org or XFree86
+ - libpng
+ - libjpeg
+
+1. to build and install the program:
+./configure
+make
+make install (as root)
+
+2. configuration files
+If no additional options are specified at step 1,
+themes are installed into /usr/share/slim/themes
+the general config file is /usr/etc/slim.conf
+
+3. automatic startup
+Edit the init scripts according to your OS/Distribution.
+
+
