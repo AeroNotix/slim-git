@@ -4,6 +4,8 @@
 # Messages (ie: shutdown)
 msg_color               #FFFFFF
 msg_font                Verdana:size=16:bold
+msg_x                   50%
+msg_y                   40%
 
 # valid values: stretch, tile
 background_style        stretch
@@ -24,9 +26,11 @@ welcome_x              	50%
 welcome_y              	38
 
 # Username / password request
-enter_font          	Verdana:size=12
-enter_color          	#d7dde8
-enter_x                 50%
-enter_y                 146
+username_font          	Verdana:size=12
+username_color        	#d7dde8
+username_x              50%
+username_y              146
+password_x              50%
+password_y              146
 username_msg            Please enter your username
 password_msg            Please enter your password

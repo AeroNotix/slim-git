@@ -60,6 +60,8 @@ private:
     XftColor inputcolor;
     XftColor msgcolor;
     XftFont* msgfont;
+    XftColor introcolor;
+    XftFont* introfont;
     XftFont* welcomefont;
     XftColor welcomecolor;
     XftFont* enterfont;
@@ -74,9 +76,14 @@ private:
     int input_cursor_height;
     int welcome_x;
     int welcome_y;
-    int enter_x;
-    int enter_y;
+    int intro_x;
+    int intro_y;
+    int username_x;
+    int username_y;
+    int password_x;
+    int password_y;
     string welcome_message;
+    string intro_message;
 
     // Pixmap data
     Pixmap PanelPixmap;

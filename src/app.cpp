@@ -198,13 +198,13 @@ void App::Login() {
         Su.Login(cfg.getOption("login_cmd").c_str());
         exit(OK_EXIT);
     }
+    
+    CloseLog();
 
     // Wait until user is logging out (login process terminates)
     pid_t wpid = -1;
     while (wpid != pid)
         wpid = wait(NULL);
-
-    //    waitpid(pid, 0, 0);
 
     // Close all clients
     KillAllClients(False);
@@ -216,6 +216,9 @@ void App::Login() {
     // Send TERM signal to clientgroup, if error send KILL
     if(killpg(pid, SIGTERM))
     killpg(pid, SIGKILL);
+    
+    // Re-activate log file
+    OpenLog();
 }
 
 
@@ -224,7 +227,7 @@ void App::Reboot() {
     alarm(0);
 
     // Write message
-    LoginPanel->Message("System rebooting...");
+    LoginPanel->Message((char*)cfg.getOption("reboot_msg").c_str());
     sleep(3);
 
     // Stop server and reboot
@@ -240,7 +243,7 @@ void App::Halt() {
     alarm(0);
 
     // Write message
-    LoginPanel->Message("System halting...");
+    LoginPanel->Message((char*)cfg.getOption("shutdown_msg").c_str());
     sleep(3);
 
     // Stop server and halt
@@ -540,7 +543,6 @@ void App::GetLock() {
 // Remove lockfile and close logs
 void App::RemoveLock() {
     remove(cfg.getOption("lockfile").c_str());
-    fclose(stderr); // release stderr (and stdout) association for logfile
 }
 
 // Redirect stdout and stderr to log file
@@ -556,4 +558,11 @@ void App::OpenLog() {
     setvbuf(stdout, NULL, _IOLBF, BUFSIZ);
     freopen (cfg.getOption("logfile").c_str(),"a",stderr);
     setvbuf(stderr, NULL, _IONBF, BUFSIZ);
+}
+
+
+// Relases stdout/err
+void App::CloseLog(){
+    fclose(stderr);
+    fclose(stdout);
 }

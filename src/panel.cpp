@@ -32,7 +32,8 @@ Panel::Panel(Display* dpy, int scr, Window root, Cfg* config) {
 
     font = XftFontOpenName(Dpy, Scr, cfg->getOption("input_font").c_str());
     welcomefont = XftFontOpenName(Dpy, Scr, cfg->getOption("welcome_font").c_str());
-    enterfont = XftFontOpenName(Dpy, Scr, cfg->getOption("enter_font").c_str());
+    introfont = XftFontOpenName(Dpy, Scr, cfg->getOption("intro_font").c_str());
+    enterfont = XftFontOpenName(Dpy, Scr, cfg->getOption("username_font").c_str());
     msgfont = XftFontOpenName(Dpy, Scr, cfg->getOption("msg_font").c_str());
 
     Visual* visual = DefaultVisual(Dpy, Scr);
@@ -40,9 +41,10 @@ Panel::Panel(Display* dpy, int scr, Window root, Cfg* config) {
     // NOTE: using XftColorAllocValue() would be a better solution. Lazy me.
     XftColorAllocName(Dpy, visual, colormap, cfg->getOption("input_fgcolor").c_str(), &fgcolor);
     XftColorAllocName(Dpy, visual, colormap, cfg->getOption("input_bgcolor").c_str(), &bgcolor);
-    XftColorAllocName(Dpy, visual, colormap, cfg->getOption("msg_color").c_str(), &msgcolor);
     XftColorAllocName(Dpy, visual, colormap, cfg->getOption("welcome_color").c_str(), &welcomecolor);
-    XftColorAllocName(Dpy, visual, colormap, cfg->getOption("enter_color").c_str(), &entercolor);
+    XftColorAllocName(Dpy, visual, colormap, cfg->getOption("username_color").c_str(), &entercolor);
+    XftColorAllocName(Dpy, visual, colormap, cfg->getOption("msg_color").c_str(), &msgcolor);
+    XftColorAllocName(Dpy, visual, colormap, cfg->getOption("intro_color").c_str(), &introcolor);
 
     // Load properties from config / theme
     input_name_x = Cfg::string2int(cfg->getOption("input_name_x").c_str());
@@ -83,42 +85,19 @@ Panel::Panel(Display* dpy, int scr, Window root, Cfg* config) {
         bg->Tile(XWidthOfScreen(ScreenOfDisplay(Dpy, Scr)), XHeightOfScreen(ScreenOfDisplay(Dpy, Scr)));
     }
     
-    // Calculate position. Can be absolute (expressed in pixels) or in percentage
-    // TODO: create a function for percentage position calculation?
-    int n = -1;
     string cfgX = cfg->getOption("input_panel_x");
     string cfgY = cfg->getOption("input_panel_y");
-    int x, y;
-    n = cfgX.find("%");
-    if (n>0) { // X Position expressed in percentage
-        cfgX = cfgX.substr(0, n);
-        x = Cfg::string2int(cfgX.c_str());
-        X = (XWidthOfScreen(ScreenOfDisplay(Dpy, Scr))*x/100) - (image->Width() / 2);
-    } else { // Absolute X position
-        X = Cfg::string2int(cfgX.c_str());
-    }
-    n = cfgY.find("%");
-    if (n>0) { // Y Position expressed in percentage
-        cfgY = cfgY.substr(0, n);
-        y = Cfg::string2int(cfgY.c_str());
-        Y = (XHeightOfScreen(ScreenOfDisplay(Dpy, Scr))*y/100) - (image->Height() / 2);
-    } else { // Absolute Y position
-        Y = Cfg::string2int(cfgY.c_str());
-    }
+    X = Cfg::absolutepos(cfgX, XWidthOfScreen(ScreenOfDisplay(Dpy, Scr)), image->Width());
+    Y = Cfg::absolutepos(cfgY, XHeightOfScreen(ScreenOfDisplay(Dpy, Scr)), image->Height());
 
     // Merge image into background
     image->Merge(bg, X, Y);
     PanelPixmap = image->createPixmap(Dpy, Scr, Root);
 
-    
-    // Read text position for welcome / enter messages
-    // NOTE: x and y values are read when painting (ShowText())
-    // since we allow % position and need to know fornt metrics
-    welcome_y = Cfg::string2int(cfg->getOption("welcome_y").c_str());
-    enter_y = Cfg::string2int(cfg->getOption("enter_y").c_str());
+    // Read (and substitute vars in) the welcome message
     welcome_message = cfg->getWelcomeMessage();
+    intro_message = cfg->getOption("intro_msg");
 
-         
     // Init In
     In = new Input(cfg);
     
@@ -180,9 +159,18 @@ void Panel::ClearPanel() {
 }
 
 void Panel::Message(char* text) {
+    string cfgX, cfgY;
+    XGlyphInfo extents;
     XftDraw *draw = XftDrawCreate(Dpy, Root,
                                   DefaultVisual(Dpy, Scr), DefaultColormap(Dpy, Scr));
-    XftDrawString8 (draw, &msgcolor, msgfont, 10, 25, (XftChar8*)text, strlen(text));
+    XftTextExtents8(Dpy, msgfont, (XftChar8*)text,
+                    strlen(text), &extents);
+    cfgX = cfg->getOption("msg_x");
+    cfgY = cfg->getOption("msg_y");
+    int msg_x = Cfg::absolutepos(cfgX, XWidthOfScreen(ScreenOfDisplay(Dpy, Scr)), extents.width);
+    int msg_y = Cfg::absolutepos(cfgY, XHeightOfScreen(ScreenOfDisplay(Dpy, Scr)), extents.height);
+
+    XftDrawString8 (draw, &msgcolor, msgfont, msg_x, msg_y, (XftChar8*)text, strlen(text));
     XFlush(Dpy);
     XftDrawDestroy(draw);
 }
@@ -370,56 +358,69 @@ void Panel::OnKeyPress(XEvent* event) {
 
 // Draw welcome and "enter username" message
 void Panel::ShowText(){
-    string cfgX;
+    string cfgX, cfgY;
     int n=-1;
-    int x;
     XGlyphInfo extents;
+    
+    bool singleInputMode = 
+    input_name_x == input_pass_x && 
+    input_name_y == input_pass_y;
     
     XftDraw *draw = XftDrawCreate(Dpy, Win,
                                   DefaultVisual(Dpy, Scr), DefaultColormap(Dpy, Scr));
-    // welcome message
+    /* welcome message */
+    XftTextExtents8(Dpy, welcomefont, (XftChar8*)welcome_message.c_str(),
+                    strlen(welcome_message.c_str()), &extents);
     cfgX = cfg->getOption("welcome_x");
-    n = cfgX.find("%");
-    if (n>0) { // X Position expressed in percentage
-        XftTextExtents8(Dpy, welcomefont, (XftChar8*)welcome_message.c_str(),
-                        strlen(welcome_message.c_str()), &extents);
-        cfgX = cfgX.substr(0, n);
-        x = Cfg::string2int(cfgX.c_str());
-        welcome_x = (image->Width()*x/100) - (extents.width / 2);
-    } else { // Absolute X position
-        welcome_x = Cfg::string2int(cfg->getOption("welcome_x").c_str());;
-    }
-    if (welcome_x>=0 && welcome_y >=0){
+    cfgY = cfg->getOption("welcome_y");    
+    welcome_x = Cfg::absolutepos(cfgX, image->Width(), extents.width);
+    welcome_y = Cfg::absolutepos(cfgY, image->Height(), extents.height);
+    if (welcome_x >= 0 && welcome_y >= 0){
         XftDrawString8 (draw, &welcomecolor, welcomefont, welcome_x, welcome_y, 
             (XftChar8*)welcome_message.c_str(), strlen(welcome_message.c_str()));
     }
-    
-    // Enter username/password message
-    string s;
-    switch(In->GetField()) {
-        case GET_PASSWD:
-            s = cfg->getOption("password_msg");
-            break;
-        case GET_NAME:
-            s = cfg->getOption("username_msg");
-            break;
-    }    
-    cfgX = cfg->getOption("enter_x");
-    n = cfgX.find("%");
-    if (n>0) { // X Position expressed in percentage
-        XftTextExtents8(Dpy, enterfont, (XftChar8*)s.c_str(),
-                        strlen(s.c_str()), &extents);
-        cfgX = cfgX.substr(0, n);
-        x = Cfg::string2int(cfgX.c_str());
-        enter_x = (image->Width()*x/100) - (extents.width / 2);
-    } else { // Absolute X position
-        enter_x = Cfg::string2int(cfg->getOption("enter_x").c_str());;
-    }
-    if (enter_x>=0 && enter_y >=0){
-        XftDrawString8 (draw, &entercolor, enterfont, enter_x, enter_y, 
-                (XftChar8*)s.c_str(), strlen(s.c_str()));
-    }
 
+    /* intro message - disabled (multi-line strings?)*/
+/*  //string intro_message = "hello\nworld"; //temp override
+    XftTextExtents8(Dpy, introfont, (XftChar8*)intro_message.c_str(),
+                    strlen(intro_message.c_str()), &extents);
+    cfgX = cfg->getOption("intro_x");
+    cfgY = cfg->getOption("intro_y");    
+    intro_x = Cfg::absolutepos(cfgX, image->Width(), extents.width);
+    intro_y = Cfg::absolutepos(cfgY, image->Height(), extents.height);
+    if (intro_x >= 0 && intro_y >= 0){
+        XftDrawString8 (draw, &introcolor, introfont, intro_x, intro_y, 
+            (XftChar8*)intro_message.c_str(), strlen(intro_message.c_str()));
+    }
+*/    
+    /* Enter username-password message */
+    string msg;
+    if (!singleInputMode|| In->GetField() == GET_PASSWD ){
+        msg = cfg->getOption("password_msg");
+        XftTextExtents8(Dpy, enterfont, (XftChar8*)msg.c_str(),
+                        strlen(msg.c_str()), &extents);
+        cfgX = cfg->getOption("password_x");
+        cfgY = cfg->getOption("password_y");
+        password_x = Cfg::absolutepos(cfgX, image->Width(), extents.width);
+        password_y = Cfg::absolutepos(cfgY, image->Height(), extents.height);
+        if (password_x >= 0 && password_y >= 0){
+            XftDrawString8 (draw, &entercolor, enterfont, password_x, password_y, 
+                    (XftChar8*)msg.c_str(), strlen(msg.c_str()));
+        }
+    }
+    if (!singleInputMode|| In->GetField() == GET_NAME ){
+        msg = cfg->getOption("username_msg");
+        XftTextExtents8(Dpy, enterfont, (XftChar8*)msg.c_str(),
+                        strlen(msg.c_str()), &extents);
+        cfgX = cfg->getOption("username_x");
+        cfgY = cfg->getOption("username_y");
+        username_x = Cfg::absolutepos(cfgX, image->Width(), extents.width);
+        username_y = Cfg::absolutepos(cfgY, image->Height(), extents.height);
+        if (username_x >= 0 && username_y >= 0){
+            XftDrawString8 (draw, &entercolor, enterfont, username_x, username_y, 
+                    (XftChar8*)msg.c_str(), strlen(msg.c_str()));
+        }
+    }
     XftDrawDestroy(draw);
  
 }

@@ -46,6 +46,7 @@ private:
     void KillAllClients(Bool top);
     void ReadConfig();
     void OpenLog();
+    void CloseLog();
 
     // Server functions
     int StartServer();

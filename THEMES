@@ -1,4 +1,4 @@
-Quick THEME howto for login.app
+Quick THEME howto for SLiM
 
 Some basic information regarding the login.app theme format.
 Read this file if you plan to make some theme for
@@ -15,44 +15,47 @@ GENERAL CONCEPT
     while the background can be a PNG or JPEG file.
     The panel is blended into the background image,
     taking care of alpha transparency.
-   
+
+SUPPORTED FORMATS
+    - fonts: use the xft font specs, ie: Verdana:size=16:bold
+    - colors: use html hex format, ie #0066CC
+    - positions: can be either absolute in pixels, ie 350
+      or relative to the container, ie 50% is in the middle
+      of the screen.
+    
 OPTIONS
     The following is an example login.app.theme file    
     ----------------------------------------------------------------------
-    # Color and font for the messages (ie: shutting down)
-    # use html colors and xft font secs
+    # Color, font,, position for the messages (ie: shutting down)
     msg_color               #FFFFFF
     msg_font                Verdana:size=16:bold
+    msg_x                   50%
+    msg_y                   30
 
     # style of background: 'stretch' or 'tile'
     background_style        stretch
 
     # Horizonatal and vertical position for the panel.
-    # This could be absolute or expressed in percentage,
-    # where 50% is the middle of the screen
     input_panel_x           50%
     input_panel_y           40%
     
     # input controls horizontal and vertical positions.
     # IMPORTANT! set input_pass_x and input_pass_y to -1
-    # to use a single input box for username/password
-    # (GDM Style)
+    # to use a single input box for username/password (GDM Style).
+    # Note that this fields only accept absolute values.
     input_name_x            40
     input_name_y            100
     input_pass_x            40
     input_pass_y            120
     
-    # Input control font and foreground/background color
-    # Again, use html and xft format
+    # Input controls font and foreground/background color
     input_font          	Verdana:size=12
     input_bgcolor           #FFFFFF
     input_fgcolor           #000000
 
     # Welcome message position. (relative to the panel)
-    # The welcome_x (and only that)
-    # value can be integer or expressed in percentage,
-    # where 50% is the middle of the panel
-    # use -1 for both values to disable the welcome message
+    # use -1 for both values or comment the options to disable
+    # the welcome message
     welcome_x              	50%
     welcome_y              	38
     
@@ -61,19 +64,19 @@ OPTIONS
     welcome_color          	#d7dde8
 
     # 'Enter username' font and foreground/background color
-    # Again, use html and xft format
-    enter_font          	Verdana:size=12
-    enter_color          	#d7dde8
+    username_font          	Verdana:size=12
+    username_color          	#d7dde8
 
-    # 'Enter username' position (relative to the panel)
-    # The enter_x (and only that)
-    # value can be integer or expressed in percentage,
-    # where 50% is the middle of the panel
-    # use -1 for both values to disable the message
-    enter_x                 50%
-    enter_y                 146
+    # 'Enter username' and 'Enter password' position (relative to the panel)
+    #  use -1 for both values to disable the message
+    # note that in case of single inputbox the password values are ignored.
+    username_x                 50%
+    username_y                 146
+    password_x                 50%
+    password_y                 146
 
-    # The message to be displayed
+    # The message to be displayed. Leave blank if no message
+    # is needed (ie, when already present in the panel image)
     username_msg            Please enter your username
     password_msg            Please enter your password
     ----------------------------------------------------------------------

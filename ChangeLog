@@ -1,2 +1,12 @@
+1.1.0 - 2004.12.09
+    * error messages for X11 apps are no longer redirected
+      to the log file
+    * fixed text position for default theme
+    * added configurable shutdown and reboot messages
+    * separated 'Enter username' and 'Enter password' messages
+      position.
+    * due to the previous two points, the theme format has 
+      slightly changed
+    
 1.0.0 - 2004.12.07
     * First public SLiM release

@@ -1571,7 +1571,7 @@ fi
 
 # Define the identity of the package.
  PACKAGE=slim
- VERSION=1.0.0
+ VERSION=1.1.0
 
 
 cat >>confdefs.h <<_ACEOF

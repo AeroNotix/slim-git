@@ -1,5 +1,5 @@
 AC_INIT(src/main.cpp)
-AM_INIT_AUTOMAKE(slim,1.0.0)
+AM_INIT_AUTOMAKE(slim,1.1.0)
 
 AC_PROG_CC
 AC_PROG_CXX

@@ -2,6 +2,8 @@
 
 msg_color               #b0b0c0
 msg_font                Verdana:size=12:bold
+msg_x                   30
+msg_y                   30
 
 background_style        tile
 

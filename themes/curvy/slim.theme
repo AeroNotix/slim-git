@@ -21,4 +21,12 @@ welcome_y               60
 welcome_color           #000000
 welcome_font            Verdana:size=12:bold
 
+username_font           Verdana:size=12
+username_color          #000000
+username_x              77
+username_y              164
+password_x              77
+password_y              198
 
+username_msg            Username
+password_msg            Password

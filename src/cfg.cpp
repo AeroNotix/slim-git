@@ -32,6 +32,8 @@ Cfg::Cfg() {
     options.insert(option("current_theme","default"));
     options.insert(option("lockfile","/tmp/slim.lock"));
     options.insert(option("logfile","/var/log/slim.log"));
+    options.insert(option("shutdown_msg","The system is halting..."));
+    options.insert(option("reboot_msg","The system is rebooting..."));
 
     // Theme stuff
     options.insert(option("input_panel_x","50%"));
@@ -50,15 +52,24 @@ Cfg::Cfg() {
     options.insert(option("welcome_color","#FFFFFF"));
     options.insert(option("welcome_x","-1"));
     options.insert(option("welcome_y","-1"));
-    options.insert(option("enter_font","Verdana:size=12"));
-    options.insert(option("enter_color","#FFFFFF"));
-    options.insert(option("enter_x","-1"));
-    options.insert(option("enter_y","-1"));
+    options.insert(option("intro_msg",""));
+    options.insert(option("intro_font","Verdana:size=14"));
+    options.insert(option("intro_color","#FFFFFF"));
+    options.insert(option("intro_x","-1"));
+    options.insert(option("intro_y","-1"));
     options.insert(option("background_style","stretch"));
+    options.insert(option("username_font","Verdana:size=12"));
+    options.insert(option("username_color","#FFFFFF"));
+    options.insert(option("username_x","-1"));
+    options.insert(option("username_y","-1"));
+    options.insert(option("password_x","-1"));
+    options.insert(option("password_y","-1"));
     options.insert(option("username_msg","Please enter your username"));
     options.insert(option("password_msg","Please enter your password"));
     options.insert(option("msg_color","#FFFFFF"));
-    options.insert(option("welcome_font","Verdana:size=16:bold"));
+    options.insert(option("msg_font","Verdana:size=16:bold"));
+    options.insert(option("msg_x","40"));
+    options.insert(option("msg_y","40"));
     
     error = "";
 
@@ -160,3 +171,16 @@ int Cfg::string2int(const char* string, bool* ok) {
     }
     return (*err == 0) ? l : 0;
 }
+
+// Get absolute position
+int Cfg::absolutepos(const string& position, int max, int width) {
+    int n = -1;
+    n = position.find("%");
+    if (n>0) { // X Position expressed in percentage
+        const char* tmp =  position.substr(0, n).c_str();
+        return (max*string2int(tmp)/100) - (width / 2);
+    } else { // Absolute X position
+        return string2int(position.c_str());
+    }
+}
+
