@@ -22,6 +22,7 @@ Cfg::Cfg() {
     options.insert(option("default_path","./:/bin:/usr/bin:/usr/local/bin:/usr/X11R6/bin"));
     options.insert(option("default_xserver","/usr/X11R6/bin/X"));
     options.insert(option("xserver_arguments",""));
+    options.insert(option("daemon","yes"));
     options.insert(option("login_cmd","exec /bin/sh -login ~/.xinitrc"));
     options.insert(option("halt_cmd","/sbin/shutdown -h now"));
     options.insert(option("reboot_cmd","/sbin/shutdown -r now"));

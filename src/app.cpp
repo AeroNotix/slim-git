@@ -119,9 +119,12 @@ void App::Run() {
 
         OpenLog();
 
-        if (daemon(0, 1) == -1) {
-            cerr << APPNAME << ": " << strerror(errno) << endl;
-            exit(ERR_EXIT);
+        // Daemonize
+        if (cfg.getOption("daemon") == "yes") {
+            if (daemon(0, 1) == -1) {
+                cerr << APPNAME << ": " << strerror(errno) << endl;
+                exit(ERR_EXIT);
+            }
         }
 
         StartServer();
