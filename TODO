@@ -1,3 +1,12 @@
+Addons:
+ - Add configurable font, color and position
+   for shutdown/reboot messages 
+
+Improvements:
+ - Multiplatform support: more portable code
+   and build procedure to target other OSs,
+   i.e. *BSD
+   
 Ideas:
 - Clock support
 - Session chooser
