@@ -48,6 +48,7 @@ void User1Signal(int sig) {
 
 
 App::App(int argc, char** argv) {
+
     int tmp;
     ServerPID = -1;
     testing = false;
@@ -239,7 +240,8 @@ void App::Login() {
     if(pid == 0) {
         // Login process starts here
         SwitchUser Su(pw, &cfg);
-        Su.Login(cfg.getOption("login_cmd").c_str());
+        string session = LoginPanel->getSession();
+        Su.Login(cfg.getLoginCommand(session).c_str());
         exit(OK_EXIT);
     }
     

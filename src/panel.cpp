@@ -21,6 +21,8 @@ Panel::Panel(Display* dpy, int scr, Window root, Cfg* config, char* themed) {
     Root = root;
     cfg = config;
     
+    session = "";
+    
     themedir = "";
     if (themed == NULL) {
         themedir = themedir + THEMESDIR + "/" + cfg->getOption("current_theme");
@@ -107,7 +109,6 @@ Panel::Panel(Display* dpy, int scr, Window root, Cfg* config, char* themed) {
     In = new Input(cfg);
 }
 
-
 Panel::~Panel() {
     XftColorFree (Dpy, DefaultVisual(Dpy, Scr), DefaultColormap(Dpy, Scr), &fgcolor);
     XftColorFree (Dpy, DefaultVisual(Dpy, Scr), DefaultColormap(Dpy, Scr), &bgcolor);
@@ -119,7 +120,6 @@ Panel::~Panel() {
     delete image;
 
 }
-
 
 void Panel::OpenPanel() {
     // Create window
@@ -145,7 +145,6 @@ void Panel::OpenPanel() {
 
 }
 
-
 void Panel::ClosePanel() {
     XUngrabKeyboard(Dpy, CurrentTime);
     XUnmapWindow(Dpy, Win);
@@ -153,9 +152,10 @@ void Panel::ClosePanel() {
     XFlush(Dpy);
 }
 
-
 void Panel::ClearPanel() {
+    session = "";
     In->Reset();
+    XClearWindow(Dpy, Root);
     XClearWindow(Dpy, Win);
     Cursor(SHOW);
     ShowText();
@@ -184,7 +184,6 @@ Input* Panel::GetInput() {
     return In;
 }
 
-
 unsigned long Panel::GetColor(const char* colorname) {
     XColor color;
     XWindowAttributes attributes;
@@ -199,7 +198,6 @@ unsigned long Panel::GetColor(const char* colorname) {
 
     return color.pixel;
 }
-
 
 void Panel::Cursor(int visible) {
     char* text;
@@ -237,7 +235,6 @@ void Panel::Cursor(int visible) {
               xx+1, y2);
 }
 
-
 int Panel::EventHandler(XEvent* event) {
     Action = WAIT;
 
@@ -253,7 +250,6 @@ int Panel::EventHandler(XEvent* event) {
 
     return Action;
 }
-
 
 void Panel::OnExpose(XEvent* event) {
     char* name = In->GetName();
@@ -283,7 +279,6 @@ void Panel::OnExpose(XEvent* event) {
     ShowText();
 }
 
-
 void Panel::OnKeyPress(XEvent* event) {
     char del;
     char buffer;
@@ -304,6 +299,10 @@ void Panel::OnKeyPress(XEvent* event) {
     XGlyphInfo extents, delextents;
     XftDraw *draw = XftDrawCreate(Dpy, Win,
                                   DefaultVisual(Dpy, Scr), DefaultColormap(Dpy, Scr));
+
+    if (keysym == XK_F1) {
+        SwitchSession();
+    }
 
     switch(In->GetField()) {
     case GET_PASSWD:
@@ -339,8 +338,7 @@ void Panel::OnKeyPress(XEvent* event) {
         XftDrawRect(draw, &bgcolor, xx-1, yy-extents.height-1,
                     extents.width+2, extents.height+2);
         XftDrawString8 (draw, &fgcolor, font, xx, yy, (XftChar8*)text, strlen(text));
-    } else // Delete char
-    {
+    } else { // Delete char
         string tmp = "";
         tmp = tmp + text;
         tmp = tmp + del;
@@ -358,7 +356,6 @@ void Panel::OnKeyPress(XEvent* event) {
     Cursor(SHOW);
     
 }
-
 
 // Draw welcome and "enter username" message
 void Panel::ShowText(){
@@ -379,27 +376,14 @@ void Panel::ShowText(){
     cfgY = cfg->getOption("welcome_y");    
     welcome_x = Cfg::absolutepos(cfgX, image->Width(), extents.width);
     welcome_y = Cfg::absolutepos(cfgY, image->Height(), extents.height);
-    if (welcome_x >= 0 && welcome_y >= 0){
+    if (welcome_x >= 0 && welcome_y >= 0) {
         XftDrawString8 (draw, &welcomecolor, welcomefont, welcome_x, welcome_y, 
             (XftChar8*)welcome_message.c_str(), strlen(welcome_message.c_str()));
     }
-
-    /* intro message - disabled (multi-line strings?)*/
-/*  //string intro_message = "hello\nworld"; //temp override
-    XftTextExtents8(Dpy, introfont, (XftChar8*)intro_message.c_str(),
-                    strlen(intro_message.c_str()), &extents);
-    cfgX = cfg->getOption("intro_x");
-    cfgY = cfg->getOption("intro_y");    
-    intro_x = Cfg::absolutepos(cfgX, image->Width(), extents.width);
-    intro_y = Cfg::absolutepos(cfgY, image->Height(), extents.height);
-    if (intro_x >= 0 && intro_y >= 0){
-        XftDrawString8 (draw, &introcolor, introfont, intro_x, intro_y, 
-            (XftChar8*)intro_message.c_str(), strlen(intro_message.c_str()));
-    }
-*/    
+  
     /* Enter username-password message */
     string msg;
-    if (!singleInputMode|| In->GetField() == GET_PASSWD ){
+    if (!singleInputMode|| In->GetField() == GET_PASSWD ) {
         msg = cfg->getOption("password_msg");
         XftTextExtents8(Dpy, enterfont, (XftChar8*)msg.c_str(),
                         strlen(msg.c_str()), &extents);
@@ -412,7 +396,7 @@ void Panel::ShowText(){
                     (XftChar8*)msg.c_str(), strlen(msg.c_str()));
         }
     }
-    if (!singleInputMode|| In->GetField() == GET_NAME ){
+    if (!singleInputMode|| In->GetField() == GET_NAME ) {
         msg = cfg->getOption("username_msg");
         XftTextExtents8(Dpy, enterfont, (XftChar8*)msg.c_str(),
                         strlen(msg.c_str()), &extents);
@@ -426,6 +410,33 @@ void Panel::ShowText(){
         }
     }
     XftDrawDestroy(draw);
- 
 }
 
+string Panel::getSession() {
+    return session;
+}
+
+// choose next available session type
+void Panel::SwitchSession() {
+    session = cfg->nextSession(session);
+    //TODO: get sessions from cfg and cycle to the next one
+    ShowSession();
+}
+
+// Display session type on the screen
+void Panel::ShowSession() {
+    XClearWindow(Dpy, Root);
+    string currsession = "Session: " + session;
+    char* text = (char*) currsession.c_str();
+    XGlyphInfo extents;
+    XftDraw *draw = XftDrawCreate(Dpy, Root,
+                                  DefaultVisual(Dpy, Scr), DefaultColormap(Dpy, Scr));
+    XftTextExtents8(Dpy, msgfont, (XftChar8*)text,
+                    strlen(text), &extents);
+    int msg_x = Cfg::absolutepos("50%", XWidthOfScreen(ScreenOfDisplay(Dpy, Scr)), extents.width);
+    int msg_y = XHeightOfScreen(ScreenOfDisplay(Dpy, Scr)) - extents.height -100;
+    
+    XftDrawString8 (draw, &msgcolor, msgfont, msg_x, msg_y, (XftChar8*)text, strlen(text));
+    XFlush(Dpy);
+    XftDrawDestroy(draw);
+}

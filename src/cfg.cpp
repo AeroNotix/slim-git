@@ -10,9 +10,8 @@
 
 #include <fstream>
 #include <string>
-
 #include "cfg.h"
-
+#include <iostream>
 using namespace std;
 
 typedef pair<string,string> option;
@@ -23,7 +22,7 @@ Cfg::Cfg() {
     options.insert(option("default_xserver","/usr/X11R6/bin/X"));
     options.insert(option("xserver_arguments",""));
     options.insert(option("daemon","yes"));
-    options.insert(option("login_cmd","exec /bin/sh -login ~/.xinitrc"));
+    options.insert(option("login_cmd","exec /bin/sh -login ~/.xinitrc %session"));
     options.insert(option("halt_cmd","/sbin/shutdown -h now"));
     options.insert(option("reboot_cmd","/sbin/shutdown -r now"));
     options.insert(option("console_cmd","/usr/X11R6/bin/xterm -C -fg white -bg black +sb -g %dx%d+%d+%d -fn %dx%d -T ""Console login"" -e /bin/sh -c ""/bin/cat /etc/issue; exec /bin/login"""));
@@ -31,11 +30,12 @@ Cfg::Cfg() {
     options.insert(option("welcome_msg","Welcome to %host"));
     options.insert(option("default_user",""));
     options.insert(option("current_theme","default"));
-    options.insert(option("lockfile","/tmp/slim.lock"));
+    options.insert(option("lockfile","/var/run/slim.lock"));
     options.insert(option("logfile","/var/log/slim.log"));
     options.insert(option("shutdown_msg","The system is halting..."));
     options.insert(option("reboot_msg","The system is rebooting..."));
-
+    options.insert(option("sessions","wmaker,blackbox,icewm"));
+    
     // Theme stuff
     options.insert(option("input_panel_x","50%"));
     options.insert(option("input_panel_y","40%"));
@@ -164,6 +164,20 @@ string Cfg::getWelcomeMessage(){
     return s;
 }
 
+/* Return the login command with replaced session */
+string Cfg::getLoginCommand(const string& session){
+    string s = getOption("login_cmd");
+    int n = -1;
+    n = s.find("%session");
+    if (n >= 0) {
+        string tmp = s.substr(0, n);
+        tmp = tmp + session;
+        tmp = tmp + s.substr(n+8, s.size() - n);
+        s = tmp;
+    }
+    return s;
+}
+
 int Cfg::string2int(const char* string, bool* ok) {
     char* err = 0;
     int l = (int)strtol(string, &err, 10);
@@ -185,3 +199,34 @@ int Cfg::absolutepos(const string& position, int max, int width) {
     }
 }
 
+// split a comma separated string into a vector of strings
+void Cfg::split(vector<string>& v, const string& str, char c) {
+    v.clear();
+    string::const_iterator s = str.begin();
+    while (true) {
+        string::const_iterator begin = s;
+        while (*s != c && s != str.end()) { ++s; }
+        v.push_back(string(begin, s));
+        if (s == str.end()) {
+            break;
+        }
+        if (++s == str.end()) {
+            v.push_back("");
+            break;
+        }
+    }
+}
+
+string Cfg::nextSession(string current) {
+    vector<string> sessions;
+    split(sessions, getOption("sessions"), ',');
+    if (sessions.size() <= 1)
+        return current;
+    
+    for (int i=0; i<sessions.size()-1; i++) {
+        if (current == sessions.at(i)) {
+            return sessions.at(i+1);
+        }
+    }
+    return sessions.at(0);
+}

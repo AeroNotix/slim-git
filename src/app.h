@@ -73,7 +73,7 @@ private:
 	// For testing themes
 	char* testtheme;
     bool testing;
-	
+    
 };
 
 

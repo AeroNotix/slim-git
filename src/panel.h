@@ -37,6 +37,7 @@ public:
     void Message(char* text);
     Input* GetInput();
     int EventHandler(XEvent* event);
+    string getSession();
 
 private:
     Panel();
@@ -45,6 +46,9 @@ private:
     void OnExpose(XEvent* event);
     void OnKeyPress(XEvent* event);
     void ShowText();
+    void SwitchSession();
+    void ShowSession();
+
     Cfg* cfg;
 
     // Private data
@@ -96,6 +100,9 @@ private:
     // For thesting themes
     bool testing;
     string themedir;
+    
+    // Session handling
+    string session;
 
 };
 

@@ -13,6 +13,7 @@
 
 #include <string>
 #include <map>
+#include <vector>
 
 #define INPUT_MAXLENGTH_NAME    30
 #define INPUT_MAXLENGTH_PASSWD  50
@@ -31,11 +32,15 @@ public:
     const string& getError() const;
     string& getOption(string option);
     string getWelcomeMessage();
-    
+    string getLoginCommand(const string& session);
+        
     static int absolutepos(const string& position, int max, int width);
     static int string2int(const char* string, bool* ok = 0);
+    
+    string nextSession(string current);
 
 private:
+    void split(vector<string>& v, const string& str, char c);
     string Trim(const string& s);
     map<string,string> options;
     string error;
