@@ -1,7 +1,7 @@
 /* SLiM - Simple Login Manager
    Copyright (C) 1997, 1998 Per Liden
-   Copyright (C) 2004 Simone Rota <sip@varlock.com>
-   Copyright (C) 2004 Johannes Winkelmann <jw@tks6.net>
+   Copyright (C) 2004-05 Simone Rota <sip@varlock.com>
+   Copyright (C) 2004-05 Johannes Winkelmann <jw@tks6.net>
       
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 
 class Panel {
 public:
-    Panel(Display* dpy, int scr, Window root, Cfg* config);
+    Panel(Display* dpy, int scr, Window root, Cfg* config, char* themed);
     ~Panel();
     void OpenPanel();
     void ClosePanel();
@@ -92,6 +92,10 @@ private:
     Input* In;
 
     Image* image;
+    
+    // For thesting themes
+    bool testing;
+    string themedir;
 
 };
 

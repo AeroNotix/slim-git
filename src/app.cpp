@@ -1,7 +1,7 @@
 /* SLiM - Simple Login Manager
    Copyright (C) 1997, 1998 Per Liden
-   Copyright (C) 2004 Simone Rota <sip@varlock.com>
-   Copyright (C) 2004 Johannes Winkelmann <jw@tks6.net>
+   Copyright (C) 2004-05 Simone Rota <sip@varlock.com>
+   Copyright (C) 2004-05 Johannes Winkelmann <jw@tks6.net>
    
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -50,62 +50,89 @@ void User1Signal(int sig) {
 App::App(int argc, char** argv) {
     int tmp;
     ServerPID = -1;
+    testing = false;
 
     // Parse command line
-    while((tmp = getopt(argc, argv, "vh?")) != EOF) {
+    while((tmp = getopt(argc, argv, "vhp:?")) != EOF) {
         switch (tmp) {
+        case 'p':	// Test theme
+            testtheme = optarg;
+            testing = true;
+            if (testtheme == NULL) {
+                cerr << "The -preview option requires an argument" << endl;
+                exit(ERR_EXIT);
+            }
+            break;
         case 'v':	// Version
             cout << APPNAME << " version " << VERSION << endl;
             exit(OK_EXIT);
             break;
-        case '?':	// Ilegal
+        case '?':	// Illegal
             cerr << endl;
         case 'h':   // Help
             cerr << "usage:  " << APPNAME << " [option ...]" << endl
             << "options:" << endl
-            << "    -version" << endl;
+            << "    -v" << endl
+            << "    -p /path/to/theme/dir" << endl;
             exit(OK_EXIT);
             break;
         }
     }
+    
+    if (getuid() != 0 && !testing) {
+        cerr << APPNAME << ": only root can run this program" << endl;
+        exit(ERR_EXIT);
+    }
+
 }
 
 
 void App::Run() {
+    
     // Read configuration and theme
     cfg.readConf(CFGFILE);
     string themefile = "";
-    themefile = themefile + THEMESDIR + "/" + cfg.getOption("current_theme") +"/slim.theme";
-    cfg.readConf(themefile);
-
-     // Create lock file
-    LoginApp->GetLock();
-   
-    // Start x-server
-    setenv("DISPLAY", DISPLAY, 1);
-    signal(SIGQUIT, CatchSignal);
-    signal(SIGTERM, CatchSignal);
-    signal(SIGKILL, CatchSignal);
-    signal(SIGINT, CatchSignal);
-    signal(SIGHUP, CatchSignal);
-    signal(SIGPIPE, CatchSignal);
-    signal(SIGUSR1, User1Signal);
-    signal(SIGALRM, AlarmSignal);
-
-    OpenLog();    
     
-    if (daemon(0, 1) == -1) {
-        cerr << APPNAME << ": " << strerror(errno) << endl;
-        exit(ERR_EXIT);
+    if (testing) {
+        themefile = themefile + testtheme + "/slim.theme";;
+    } else {
+        themefile = themefile + THEMESDIR + "/" 
+            + cfg.getOption("current_theme") + "/slim.theme";
     }
-   
-    StartServer();
-    alarm(2);
+    
+    cfg.readConf(themefile);
+    
+    if (!testing) {
+        // Create lock file
+        LoginApp->GetLock();
 
+        // Start x-server
+        setenv("DISPLAY", DISPLAY, 1);
+        signal(SIGQUIT, CatchSignal);
+        signal(SIGTERM, CatchSignal);
+        signal(SIGKILL, CatchSignal);
+        signal(SIGINT, CatchSignal);
+        signal(SIGHUP, CatchSignal);
+        signal(SIGPIPE, CatchSignal);
+        signal(SIGUSR1, User1Signal);
+        signal(SIGALRM, AlarmSignal);
+
+        OpenLog();
+
+        if (daemon(0, 1) == -1) {
+            cerr << APPNAME << ": " << strerror(errno) << endl;
+            exit(ERR_EXIT);
+        }
+
+        StartServer();
+        alarm(2);
+
+    }
+    
     // Open display
     if((Dpy = XOpenDisplay(DISPLAY)) == 0) {
         cerr << APPNAME << ": could not open display '" << DISPLAY << "'" << endl;
-        StopServer();
+        if (!testing) StopServer();
         exit(ERR_EXIT);
     }
 
@@ -113,8 +140,16 @@ void App::Run() {
     Scr = DefaultScreen(Dpy);
     Root = RootWindow(Dpy, Scr);
 
+    // for tests we use a standard window
+    if (testing) {
+        Window RealRoot = RootWindow(Dpy, Scr);
+        Root = XCreateSimpleWindow(Dpy, RealRoot, 0, 0, 640, 480, 0, 0, 0);
+        XMapWindow(Dpy, Root);
+        XFlush(Dpy);
+    }
+    
     // Create panel
-    LoginPanel = new Panel(Dpy, Scr, Root, &cfg);
+    LoginPanel = new Panel(Dpy, Scr, Root, &cfg, testtheme);
 
     // Start looping
     XEvent event;
@@ -128,8 +163,10 @@ void App::Run() {
             setBackground();
 
             // Close all clients
-            KillAllClients(False);
-            KillAllClients(True);
+            if (!testing) {
+                KillAllClients(False);
+                KillAllClients(True);
+            }
 
             // Show panel
             LoginPanel->OpenPanel();
@@ -137,7 +174,7 @@ void App::Run() {
 
         Action = WAIT;
         LoginPanel->GetInput()->Reset();
-        if (firstloop && cfg.getOption("default_user") != ""){
+        if (firstloop && cfg.getOption("default_user") != "") {
             LoginPanel->GetInput()->SetName(cfg.getOption("default_user") );
             firstloop = false;
         }
@@ -152,6 +189,10 @@ void App::Run() {
             LoginPanel->ClearPanel();
             XBell(Dpy, 100);
         } else {
+            // for themes test we just quit
+            if (testing) {
+                Action = EXIT;
+            }
             panelclosed = 1;
             LoginPanel->ClosePanel();
 
@@ -272,10 +313,15 @@ void App::Console() {
 
 
 void App::Exit() {
-    // Deallocate and stop server
-    delete LoginPanel;
-    StopServer();
-    RemoveLock();
+    if (testing) {
+        char* testmsg = "This is a test message :-)";
+        LoginPanel->Message(testmsg);
+        sleep(3);
+    } else {
+        delete LoginPanel;
+        StopServer();
+        RemoveLock();
+    }
     exit(OK_EXIT);
 }
 
@@ -502,13 +548,19 @@ void App::StopServer() {
 }
 
 void App::setBackground() {
-    string filename = "";
-    filename = filename + THEMESDIR + "/" + cfg.getOption("current_theme") +"/background.png";
+    string themedir = "";
+    if (!testing) {
+        themedir = themedir + THEMESDIR + "/" + cfg.getOption("current_theme");    
+    } else {
+        themedir = testtheme;
+    }
+    string filename;
+    filename = themedir + "/background.png";
     Image *image = new Image;
     bool loaded = image->Read(filename.c_str());
     if (!loaded){ // try jpeg if png failed
         filename = "";
-        filename = filename + THEMESDIR + "/" + cfg.getOption("current_theme") +"/background.jpg";
+        filename = themedir + "/background.jpg";
         loaded = image->Read(filename.c_str());
     }
     if (loaded) {

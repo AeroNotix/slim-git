@@ -1,3 +1,6 @@
+x.x.x - in progress
+    * added theme preview (slim -p /path/to/theme)
+
 1.1.0 - 2004.12.09
     * error messages for X11 apps are no longer redirected
       to the log file

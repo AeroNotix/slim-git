@@ -1,7 +1,7 @@
 /* SLiM - Simple Login Manager
    Copyright (C) 1997, 1998 Per Liden
-   Copyright (C) 2004 Simone Rota <sip@varlock.com>
-   Copyright (C) 2004 Johannes Winkelmann <jw@tks6.net>
+   Copyright (C) 2004-05 Simone Rota <sip@varlock.com>
+   Copyright (C) 2004-05 Johannes Winkelmann <jw@tks6.net>
       
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -14,12 +14,19 @@
 
 using namespace std;
 
-Panel::Panel(Display* dpy, int scr, Window root, Cfg* config) {
+Panel::Panel(Display* dpy, int scr, Window root, Cfg* config, char* themed) {
     // Set display
     Dpy = dpy;
     Scr = scr;
     Root = root;
     cfg = config;
+    
+    themedir = "";
+    if (themed == NULL) {
+        themedir = themedir + THEMESDIR + "/" + cfg->getOption("current_theme");
+    } else {
+        themedir = themed;
+    }
 
     // Init GC
     XGCValues gcv;
@@ -58,7 +65,7 @@ Panel::Panel(Display* dpy, int scr, Window root, Cfg* config) {
 
     // Load panel and background image
     string panelpng = "";
-    panelpng = panelpng + THEMESDIR + "/" + cfg->getOption("current_theme") +"/panel.png";
+    panelpng = panelpng + themedir +"/panel.png";
     image = new Image;
     bool loaded = image->Read(panelpng.c_str());
     if (!loaded) {
@@ -66,12 +73,10 @@ Panel::Panel(Display* dpy, int scr, Window root, Cfg* config) {
         exit(ERR_EXIT);
     }
     Image* bg = new Image;
-    panelpng = "";
-    panelpng = panelpng + THEMESDIR + "/" + cfg->getOption("current_theme") +"/background.png";
+    panelpng = themedir +"/background.png";
     loaded = bg->Read(panelpng.c_str());
     if (!loaded) { // try jpeg if png failed
-        panelpng = "";
-        panelpng = panelpng + THEMESDIR + "/" + cfg->getOption("current_theme") +"/background.jpg";
+        panelpng = themedir + "/background.jpg";
         loaded = bg->Read(panelpng.c_str());
         if (!loaded){
             cerr << APPNAME << ": could not load background image" << endl;
@@ -100,7 +105,6 @@ Panel::Panel(Display* dpy, int scr, Window root, Cfg* config) {
 
     // Init In
     In = new Input(cfg);
-    
 }
 
 
