@@ -70,10 +70,14 @@ Panel::Panel(Display* dpy, int scr, Window root, Cfg* config, char* themed) {
     panelpng = panelpng + themedir +"/panel.png";
     image = new Image;
     bool loaded = image->Read(panelpng.c_str());
-    if (!loaded) {
-        cerr << APPNAME << ": could not load panel image" << endl;
-        exit(ERR_EXIT);
-    }
+    if (!loaded) { // try jpeg if png failed
+        panelpng = themedir + "/panel.jpg";
+        loaded = image->Read(panelpng.c_str());
+        if (!loaded) {
+            cerr << APPNAME << ": could not load panel image" << endl;
+            exit(ERR_EXIT);
+        }
+    }    
     Image* bg = new Image;
     panelpng = themedir +"/background.png";
     loaded = bg->Read(panelpng.c_str());
