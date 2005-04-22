@@ -131,7 +131,7 @@ void Panel::OpenPanel() {
                               image->Width(),
                               image->Height(),
                               0, GetColor("white"), GetColor("white"));
-    //Win = Root;
+    
     // Events
     XSelectInput(Dpy, Win, ExposureMask | KeyPressMask);
 

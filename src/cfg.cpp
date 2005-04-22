@@ -59,6 +59,7 @@ Cfg::Cfg() {
     options.insert(option("intro_x","-1"));
     options.insert(option("intro_y","-1"));
     options.insert(option("background_style","stretch"));
+    options.insert(option("background_color","#CCCCCC"));
     options.insert(option("username_font","Verdana:size=12"));
     options.insert(option("username_color","#FFFFFF"));
     options.insert(option("username_x","-1"));

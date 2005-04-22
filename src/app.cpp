@@ -152,6 +152,9 @@ void App::Run() {
         XFlush(Dpy);
     }
     
+    
+    HideCursor();
+    
     // Create panel
     LoginPanel = new Panel(Dpy, Scr, Root, &cfg, testtheme);
 
@@ -226,6 +229,20 @@ int App::GetServerPID() {
     return ServerPID;
 }
 
+// Hide the cursor
+void App::HideCursor() {
+	XColor		    black;
+	char		    cursordata[1];
+	Pixmap		    cursorpixmap;
+	Cursor		    cursor;
+	cursordata[0]=0;
+	cursorpixmap=XCreateBitmapFromData(Dpy,Root,cursordata,1,1);
+	black.red=0;   
+	black.green=0;
+	black.blue=0;
+	cursor=XCreatePixmapCursor(Dpy,cursorpixmap,cursorpixmap,&black,&black,0,0);
+	XDefineCursor(Dpy,Root,cursor);
+}
 
 void App::Login() {
     struct passwd *pw;
@@ -262,6 +279,8 @@ void App::Login() {
     // Send TERM signal to clientgroup, if error send KILL
     if(killpg(pid, SIGTERM))
     killpg(pid, SIGKILL);
+    
+    HideCursor();
     
     // Re-activate log file
     OpenLog();

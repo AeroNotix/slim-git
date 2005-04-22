@@ -1,5 +1,7 @@
 x.x.x - in progress
     * added theme preview (slim -p /path/to/theme)
+    * added JPEG support for panel image
+    * added 'center' background type and 'background_color' option
 
 1.1.0 - 2004.12.09
     * error messages for X11 apps are no longer redirected

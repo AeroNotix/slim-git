@@ -47,6 +47,7 @@ private:
     void ReadConfig();
     void OpenLog();
     void CloseLog();
+    void HideCursor();
 
     // Server functions
     int StartServer();
