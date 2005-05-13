@@ -506,7 +506,7 @@ void Panel::SlimDrawString8(XftDraw *d, XftColor *color, XftFont *font,
                             XftColor* shadowColor, 
                             int xOffset, int yOffset)
 {
-    if (shadowColor && xOffset && yOffset) {
+    if (xOffset && yOffset) {
         XftDrawString8(d, shadowColor, font, x+xOffset, y+yOffset, 
                        string, len);
     }
