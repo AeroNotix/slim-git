@@ -1,7 +1,7 @@
 /* SLiM - Simple Login Manager
    Copyright (C) 2004-05 Simone Rota <sip@varlock.com>
    Copyright (C) 2004-05 Johannes Winkelmann <jw@tks6.net>
-      
+
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation; either version 2 of the License, or
@@ -35,7 +35,7 @@ Cfg::Cfg() {
     options.insert(option("shutdown_msg","The system is halting..."));
     options.insert(option("reboot_msg","The system is rebooting..."));
     options.insert(option("sessions","wmaker,blackbox,icewm"));
-    
+
     // Theme stuff
     options.insert(option("input_panel_x","50%"));
     options.insert(option("input_panel_y","40%"));
@@ -49,30 +49,48 @@ Cfg::Cfg() {
     options.insert(option("input_cursor_height","20"));
     options.insert(option("input_maxlength_name","20"));
     options.insert(option("input_maxlength_passwd","20"));
+    options.insert(option("input_shadow_xoffset", "0"));
+    options.insert(option("input_shadow_yoffset", "0"));
+    options.insert(option("input_shadow_color","#FFFFFF"));
+    
     options.insert(option("welcome_font","Verdana:size=14"));
     options.insert(option("welcome_color","#FFFFFF"));
     options.insert(option("welcome_x","-1"));
     options.insert(option("welcome_y","-1"));
+    options.insert(option("welcome_shadow_xoffset", "0"));
+    options.insert(option("welcome_shadow_yoffset", "0"));
+    options.insert(option("welcome_shadow_color","#FFFFFF"));
+    
     options.insert(option("intro_msg",""));
     options.insert(option("intro_font","Verdana:size=14"));
     options.insert(option("intro_color","#FFFFFF"));
     options.insert(option("intro_x","-1"));
     options.insert(option("intro_y","-1"));
+    
     options.insert(option("background_style","stretch"));
     options.insert(option("background_color","#CCCCCC"));
+    
     options.insert(option("username_font","Verdana:size=12"));
     options.insert(option("username_color","#FFFFFF"));
     options.insert(option("username_x","-1"));
     options.insert(option("username_y","-1"));
+    options.insert(option("username_msg","Please enter your username"));
+    options.insert(option("username_shadow_xoffset", "0"));
+    options.insert(option("username_shadow_yoffset", "0"));
+    options.insert(option("username_shadow_color","#FFFFFF"));
+    
     options.insert(option("password_x","-1"));
     options.insert(option("password_y","-1"));
-    options.insert(option("username_msg","Please enter your username"));
     options.insert(option("password_msg","Please enter your password"));
+    
     options.insert(option("msg_color","#FFFFFF"));
     options.insert(option("msg_font","Verdana:size=16:bold"));
     options.insert(option("msg_x","40"));
     options.insert(option("msg_y","40"));
-    
+    options.insert(option("msg_shadow_xoffset", "0"));
+    options.insert(option("msg_shadow_yoffset", "0"));
+    options.insert(option("msg_shadow_color","#FFFFFF"));
+
     error = "";
 
 }
@@ -223,7 +241,7 @@ string Cfg::nextSession(string current) {
     split(sessions, getOption("sessions"), ',');
     if (sessions.size() <= 1)
         return current;
-    
+
     for (int i=0; i<sessions.size()-1; i++) {
         if (current == sessions.at(i)) {
             return sessions.at(i+1);

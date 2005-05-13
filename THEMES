@@ -81,3 +81,39 @@ OPTIONS
     username_msg            Please enter your username
     password_msg            Please enter your password
     ----------------------------------------------------------------------
+
+SHADOWS
+
+    The 'msg', 'input', 'welcome' and 'username' sections support
+    shadows; three values can be configured:
+    - color: the shadow color
+    - x offset: the offset in x direction, relative to the normal text 
+    - y offset: the offset in y direction, relative to the normal text
+
+    So to add a text shadow to the welcome message, add the following
+    to slim.conf:
+    ----------------------------------------------------------------------
+    welcome_shadow_xoffset      -2
+    welcome_shadow_yoffset      2
+    welcome_shadow_color        #ff0000
+    ----------------------------------------------------------------------
+     
+    The other keys are analogue:
+    ----------------------------------------------------------------------
+    # for username and password label
+    username_shadow_xoffset 	2
+    username_shadow_yoffset 	-2
+    username_shadow_color   	#ff0000
+
+    # for the input fields
+    input_shadow_xoffset 	1
+    input_shadow_yoffset 	1
+    input_shadow_color   	#0000ff
+
+    # for the messages:
+    msg_shadow_xoffset 		1    
+    msg_shadow_yoffset 		1    
+    msg_shadow_color   		#ff00ff
+    ----------------------------------------------------------------------
+
+    
