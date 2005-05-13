@@ -64,11 +64,11 @@ Panel::Panel(Display* dpy, int scr, Window root, Cfg* config, char* themed) {
     input_name_y = Cfg::string2int(cfg->getOption("input_name_y").c_str());
     input_pass_x = Cfg::string2int(cfg->getOption("input_pass_x").c_str());
     input_pass_y = Cfg::string2int(cfg->getOption("input_pass_y").c_str());
-    inputShadowXOffset = 
-        Cfg::string2int(cfg->getOption("welcome_shadow_xoffset").c_str());
-    inputShadowYOffset = 
-        Cfg::string2int(cfg->getOption("welcome_shadow_yoffset").c_str());
-    
+    inputShadowXOffset =
+        Cfg::string2int(cfg->getOption("input_shadow_xoffset").c_str());
+    inputShadowYOffset =
+        Cfg::string2int(cfg->getOption("input_shadow_yoffset").c_str());
+
     if (input_pass_x < 0 || input_pass_y < 0){ // single inputbox mode
         input_pass_x = input_name_x;
         input_pass_y = input_name_y;
@@ -184,15 +184,15 @@ void Panel::Message(char* text) {
                     strlen(text), &extents);
     cfgX = cfg->getOption("msg_x");
     cfgY = cfg->getOption("msg_y");
-    int shadowXOffset = 
+    int shadowXOffset =
         Cfg::string2int(cfg->getOption("msg_shadow_xoffset").c_str());
-    int shadowYOffset = 
+    int shadowYOffset =
         Cfg::string2int(cfg->getOption("msg_shadow_yoffset").c_str());
 
     int msg_x = Cfg::absolutepos(cfgX, XWidthOfScreen(ScreenOfDisplay(Dpy, Scr)), extents.width);
     int msg_y = Cfg::absolutepos(cfgY, XHeightOfScreen(ScreenOfDisplay(Dpy, Scr)), extents.height);
 
-    SlimDrawString8 (draw, &msgcolor, msgfont, msg_x, msg_y, 
+    SlimDrawString8 (draw, &msgcolor, msgfont, msg_x, msg_y,
                      (XftChar8*)text, strlen(text),
                      &msgshadowcolor,
                      shadowXOffset, shadowYOffset);
@@ -279,25 +279,25 @@ void Panel::OnExpose(XEvent* event) {
                         DefaultVisual(Dpy, Scr), DefaultColormap(Dpy, Scr));
     if (input_pass_x != input_name_x || input_pass_y != input_name_y){
         SlimDrawString8 (draw, &fgcolor, font, input_name_x, input_name_y,
-                         (XftChar8*)name, strlen(name), 
-                         &inputshadowcolor, 
+                         (XftChar8*)name, strlen(name),
+                         &inputshadowcolor,
                          inputShadowXOffset, inputShadowYOffset);
         SlimDrawString8 (draw, &fgcolor, font, input_pass_x, input_pass_y,
                          (XftChar8*)passwd, strlen(passwd),
-                         &inputshadowcolor, 
+                         &inputshadowcolor,
                          inputShadowXOffset, inputShadowYOffset);
     } else { //single input mode
         switch(In->GetField()) {
             case GET_PASSWD:
                 SlimDrawString8 (draw, &fgcolor, font, input_pass_x, input_pass_y,
                                  (XftChar8*)passwd, strlen(passwd),
-                                 &inputshadowcolor, 
+                                 &inputshadowcolor,
                                  inputShadowXOffset, inputShadowYOffset);
                 break;
             case GET_NAME:
                 SlimDrawString8 (draw, &fgcolor, font, input_name_x, input_name_y,
                                  (XftChar8*)name, strlen(name),
-                                 &inputshadowcolor, 
+                                 &inputshadowcolor,
                                  inputShadowXOffset, inputShadowYOffset);
                 break;
         }
@@ -366,9 +366,9 @@ void Panel::OnKeyPress(XEvent* event) {
         // No character deleted
         XftDrawRect(draw, &bgcolor, xx-1, yy-extents.height-1,
                     extents.width+2, extents.height+2);
-        SlimDrawString8 (draw, &fgcolor, font, xx, yy, 
+        SlimDrawString8 (draw, &fgcolor, font, xx, yy,
                          (XftChar8*)text, strlen(text),
-                         &inputshadowcolor, 
+                         &inputshadowcolor,
                          inputShadowXOffset, inputShadowYOffset);
     } else { // Delete char
         string tmp = "";
@@ -381,9 +381,9 @@ void Panel::OnKeyPress(XEvent* event) {
         XftTextExtents8(Dpy, font, (XftChar8*)tmp.c_str(), strlen(tmp.c_str()), &extents);
         XftDrawRect(draw, &bgcolor, xx-3, yy-mh-3,
                     extents.width+6, mh+6);
-        SlimDrawString8 (draw, &fgcolor, font, xx, yy, 
+        SlimDrawString8 (draw, &fgcolor, font, xx, yy,
                          (XftChar8*)text, strlen(text),
-                         &inputshadowcolor, 
+                         &inputshadowcolor,
                          inputShadowXOffset, inputShadowYOffset);
     }
 
@@ -409,16 +409,16 @@ void Panel::ShowText(){
                     strlen(welcome_message.c_str()), &extents);
     cfgX = cfg->getOption("welcome_x");
     cfgY = cfg->getOption("welcome_y");
-    int shadowXOffset = 
+    int shadowXOffset =
         Cfg::string2int(cfg->getOption("welcome_shadow_xoffset").c_str());
-    int shadowYOffset = 
+    int shadowYOffset =
         Cfg::string2int(cfg->getOption("welcome_shadow_yoffset").c_str());
     welcome_x = Cfg::absolutepos(cfgX, image->Width(), extents.width);
     welcome_y = Cfg::absolutepos(cfgY, image->Height(), extents.height);
     if (welcome_x >= 0 && welcome_y >= 0) {
-        SlimDrawString8 (draw, &welcomecolor, welcomefont, 
+        SlimDrawString8 (draw, &welcomecolor, welcomefont,
                          welcome_x, welcome_y,
-                         (XftChar8*)welcome_message.c_str(), 
+                         (XftChar8*)welcome_message.c_str(),
                          strlen(welcome_message.c_str()),
                          &welcomeshadowcolor, shadowXOffset, shadowYOffset);
     }
@@ -431,9 +431,9 @@ void Panel::ShowText(){
                         strlen(msg.c_str()), &extents);
         cfgX = cfg->getOption("password_x");
         cfgY = cfg->getOption("password_y");
-        int shadowXOffset = 
+        int shadowXOffset =
             Cfg::string2int(cfg->getOption("username_shadow_xoffset").c_str());
-        int shadowYOffset = 
+        int shadowYOffset =
             Cfg::string2int(cfg->getOption("username_shadow_yoffset").c_str());
         password_x = Cfg::absolutepos(cfgX, image->Width(), extents.width);
         password_y = Cfg::absolutepos(cfgY, image->Height(), extents.height);
@@ -449,9 +449,9 @@ void Panel::ShowText(){
                         strlen(msg.c_str()), &extents);
         cfgX = cfg->getOption("username_x");
         cfgY = cfg->getOption("username_y");
-        int shadowXOffset = 
+        int shadowXOffset =
             Cfg::string2int(cfg->getOption("username_shadow_xoffset").c_str());
-        int shadowYOffset = 
+        int shadowYOffset =
             Cfg::string2int(cfg->getOption("username_shadow_yoffset").c_str());
         username_x = Cfg::absolutepos(cfgX, image->Width(), extents.width);
         username_y = Cfg::absolutepos(cfgY, image->Height(), extents.height);
@@ -487,12 +487,12 @@ void Panel::ShowSession() {
                     strlen(text), &extents);
     int msg_x = Cfg::absolutepos("50%", XWidthOfScreen(ScreenOfDisplay(Dpy, Scr)), extents.width);
     int msg_y = XHeightOfScreen(ScreenOfDisplay(Dpy, Scr)) - extents.height -100;
-    int shadowXOffset = 
+    int shadowXOffset =
         Cfg::string2int(cfg->getOption("welcome_shadow_xoffset").c_str());
-    int shadowYOffset = 
+    int shadowYOffset =
         Cfg::string2int(cfg->getOption("welcome_shadow_yoffset").c_str());
 
-    SlimDrawString8(draw, &msgcolor, msgfont, msg_x, msg_y, 
+    SlimDrawString8(draw, &msgcolor, msgfont, msg_x, msg_y,
                     (XftChar8*)text, strlen(text),
                     &msgshadowcolor,
                     shadowXOffset, shadowYOffset);
@@ -503,11 +503,11 @@ void Panel::ShowSession() {
 
 void Panel::SlimDrawString8(XftDraw *d, XftColor *color, XftFont *font,
                             int x, int y, XftChar8 *string, int len,
-                            XftColor* shadowColor, 
+                            XftColor* shadowColor,
                             int xOffset, int yOffset)
 {
     if (xOffset && yOffset) {
-        XftDrawString8(d, shadowColor, font, x+xOffset, y+yOffset, 
+        XftDrawString8(d, shadowColor, font, x+xOffset, y+yOffset,
                        string, len);
     }
     XftDrawString8(d, color, font, x, y, string, len);
