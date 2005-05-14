@@ -107,12 +107,12 @@ Panel::Panel(Display* dpy, int scr, Window root, Cfg* config, char* themed) {
     } else if (bgstyle == "center") {
  	    string hexvalue = cfg->getOption("background_color");
         hexvalue = hexvalue.substr(1,6);
-  	    image->Center(XWidthOfScreen(ScreenOfDisplay(Dpy, Scr)), XHeightOfScreen(ScreenOfDisplay(Dpy, Scr)),
+  	    bg->Center(XWidthOfScreen(ScreenOfDisplay(Dpy, Scr)), XHeightOfScreen(ScreenOfDisplay(Dpy, Scr)),
        			    hexvalue.c_str());
     } else { // plain color or error
 	    string hexvalue = cfg->getOption("background_color");
         hexvalue = hexvalue.substr(1,6);
-  	    image->Center(XWidthOfScreen(ScreenOfDisplay(Dpy, Scr)), XHeightOfScreen(ScreenOfDisplay(Dpy, Scr)),
+  	    bg->Center(XWidthOfScreen(ScreenOfDisplay(Dpy, Scr)), XHeightOfScreen(ScreenOfDisplay(Dpy, Scr)),
     			    hexvalue.c_str());
     }
 

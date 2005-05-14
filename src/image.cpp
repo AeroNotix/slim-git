@@ -368,7 +368,6 @@ void Image::Crop(const int x, const int y, const int w, const int h) {
             }
             opos++;
         }
-
     }
 
     free(rgb_data);
@@ -382,7 +381,7 @@ void Image::Crop(const int x, const int y, const int w, const int h) {
 
 }
 
-/* Center the image in a rectangle of given width aqnd height.
+/* Center the image in a rectangle of given width and height.
  * Fills the remaining space (if any) with the hex color
  */
 void Image::Center(const int w, const int h, const char *hex) {
@@ -394,7 +393,6 @@ void Image::Center(const int w, const int h, const char *hex) {
     unsigned long g = packed_rgb>>8 & 0xff;
     unsigned long b = packed_rgb & 0xff;    
 
-	//exit(1);
     unsigned char *new_rgb = (unsigned char *) malloc(3 * w * h);
     memset(new_rgb, 0, 3 * w * h);
 
@@ -403,6 +401,31 @@ void Image::Center(const int w, const int h, const char *hex) {
         new_rgb[3*i] = r;
         new_rgb[3*i+1] = g;
         new_rgb[3*i+2] = b;
+    }
+
+    // TODO: get x and y, crop if necessary
+    int x = 0;
+	int y = 0;
+
+    int x2 = x + width;
+    int y2 = y + height;
+
+    int ipos = 0;
+    int opos = 0;
+    
+    cout << width << endl;
+    cout << height << endl;
+    exit(1);
+    for (int j = 0; j < w; j++) {
+        for (int i = 0; i < h; i++) {
+            if (j>=y && i>=x && j<y2 && i<x2) {
+                for (int k = 0; k < 3; k++) {
+                    new_rgb[3*ipos + k] = static_cast<unsigned char> (rgb_data[3*opos + k]);
+                }
+                ipos++;
+            }
+            opos++;
+        }
     }
 
     free(rgb_data);
@@ -426,7 +449,6 @@ void Image::Plain(const int w, const int h, const char *hex) {
     unsigned long g = packed_rgb>>8 & 0xff;
     unsigned long b = packed_rgb & 0xff;    
 
-	//exit(1);
     unsigned char *new_rgb = (unsigned char *) malloc(3 * w * h);
     memset(new_rgb, 0, 3 * w * h);
 
