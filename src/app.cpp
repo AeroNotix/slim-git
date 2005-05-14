@@ -52,7 +52,7 @@ App::App(int argc, char** argv) {
     int tmp;
     ServerPID = -1;
     testing = false;
-    
+
     // Parse command line
     while((tmp = getopt(argc, argv, "vhp:?")) != EOF) {
         switch (tmp) {
@@ -99,7 +99,7 @@ void App::Run() {
         cout << "Using display name " << DisplayName << endl;
     }
 #endif
-    
+
     // Read configuration and theme
     cfg.readConf(CFGFILE);
     string themefile = "";
@@ -146,7 +146,7 @@ void App::Run() {
 
     // Open display
     if((Dpy = XOpenDisplay(DisplayName)) == 0) {
-        cerr << APPNAME << ": could not open display '" 
+        cerr << APPNAME << ": could not open display '"
              << DisplayName << "'" << endl;
         if (!testing) StopServer();
         exit(ERR_EXIT);
@@ -463,17 +463,25 @@ int App::StartServer() {
     static char* server[MAX_XSERVER_ARGS+2] = { NULL };
     server[0] = (char *)cfg.getOption("default_xserver").c_str();
     string argOption = cfg.getOption("xserver_arguments");
-    char* args = new char[argOption.length()+1];
+    char* args = new char[argOption.length()+2]; // NULL plus vt
     strcpy(args, argOption.c_str());
 
     int argc = 1;
     int pos = 0;
+    bool hasVtSet = false;
     while (args[pos] != '\0') {
         if (args[pos] == ' ' || args[pos] == '\t') {
             *(args+pos) = '\0';
             server[argc++] = args+pos+1;
         } else if (pos == 0) {
             server[argc++] = args+pos;
+        }
+        if (server[argc-1][0] == 'v' && server[argc-1][1] == 't') {
+            bool ok = false;
+            Cfg::string2int(server[argc-1]+2, &ok);
+            if (ok) {
+                hasVtSet = true;
+            }
         }
         ++pos;
 
@@ -483,6 +491,9 @@ int App::StartServer() {
             argc = 1;
             break;
         }
+    }
+    if (!hasVtSet) {
+        server[argc++] = "vt07";
     }
     server[argc] = NULL;
 
