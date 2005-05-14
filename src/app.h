@@ -72,6 +72,7 @@ private:
 
     void setBackground();
 	
+    bool daemonmode;
 	// For testing themes
 	char* testtheme;
     bool testing;

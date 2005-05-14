@@ -54,15 +54,18 @@ App::App(int argc, char** argv) {
     testing = false;
 
     // Parse command line
-    while((tmp = getopt(argc, argv, "vhp:?")) != EOF) {
+    while((tmp = getopt(argc, argv, "vhp:d?")) != EOF) {
         switch (tmp) {
         case 'p':	// Test theme
             testtheme = optarg;
             testing = true;
             if (testtheme == NULL) {
-                cerr << "The -preview option requires an argument" << endl;
+                cerr << "The -p option requires an argument" << endl;
                 exit(ERR_EXIT);
             }
+            break;
+        case 'd':	// Daemon mode
+            daemonmode = true;
             break;
         case 'v':	// Version
             cout << APPNAME << " version " << VERSION << endl;
@@ -73,6 +76,7 @@ App::App(int argc, char** argv) {
         case 'h':   // Help
             cerr << "usage:  " << APPNAME << " [option ...]" << endl
             << "options:" << endl
+            << "    -d" << endl
             << "    -v" << endl
             << "    -p /path/to/theme/dir" << endl;
             exit(OK_EXIT);
@@ -131,7 +135,7 @@ void App::Run() {
         OpenLog();
 
         // Daemonize
-        if (cfg.getOption("daemon") == "yes") {
+        if (daemonmode) {
             if (daemon(0, 1) == -1) {
                 cerr << APPNAME << ": " << strerror(errno) << endl;
                 exit(ERR_EXIT);
