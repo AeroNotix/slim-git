@@ -2,7 +2,7 @@
    Copyright (C) 1997, 1998 Per Liden
    Copyright (C) 2004-05 Simone Rota <sip@varlock.com>
    Copyright (C) 2004-05 Johannes Winkelmann <jw@tks6.net>
-   
+
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation; either version 2 of the License, or
@@ -79,7 +79,7 @@ App::App(int argc, char** argv) {
             break;
         }
     }
-    
+
     if (getuid() != 0 && !testing) {
         cerr << APPNAME << ": only root can run this program" << endl;
         exit(ERR_EXIT);
@@ -89,26 +89,35 @@ App::App(int argc, char** argv) {
 
 
 void App::Run() {
+
+    DisplayName = DISPLAY;
+
+#ifdef XNEST_DEBUG
+    char* p = getenv("DISPLAY");
+    if (p && p[0]) {
+        DisplayName = p;
+        cout << "Using display name " << DisplayName << endl;
+    }
+#endif
     
     // Read configuration and theme
     cfg.readConf(CFGFILE);
     string themefile = "";
-    
     if (testing) {
         themefile = themefile + testtheme + "/slim.theme";;
     } else {
-        themefile = themefile + THEMESDIR + "/" 
+        themefile = themefile + THEMESDIR + "/"
             + cfg.getOption("current_theme") + "/slim.theme";
     }
-    
+
     cfg.readConf(themefile);
-    
+
     if (!testing) {
         // Create lock file
         LoginApp->GetLock();
 
         // Start x-server
-        setenv("DISPLAY", DISPLAY, 1);
+        setenv("DISPLAY", DisplayName, 1);
         signal(SIGQUIT, CatchSignal);
         signal(SIGTERM, CatchSignal);
         signal(SIGKILL, CatchSignal);
@@ -118,6 +127,7 @@ void App::Run() {
         signal(SIGUSR1, User1Signal);
         signal(SIGALRM, AlarmSignal);
 
+#ifndef XNEST_DEBUG
         OpenLog();
 
         // Daemonize
@@ -130,12 +140,14 @@ void App::Run() {
 
         StartServer();
         alarm(2);
+#endif
 
     }
-    
+
     // Open display
-    if((Dpy = XOpenDisplay(DISPLAY)) == 0) {
-        cerr << APPNAME << ": could not open display '" << DISPLAY << "'" << endl;
+    if((Dpy = XOpenDisplay(DisplayName)) == 0) {
+        cerr << APPNAME << ": could not open display '" 
+             << DisplayName << "'" << endl;
         if (!testing) StopServer();
         exit(ERR_EXIT);
     }
@@ -151,10 +163,10 @@ void App::Run() {
         XMapWindow(Dpy, Root);
         XFlush(Dpy);
     }
-    
-    
+
+
     HideCursor();
-    
+
     // Create panel
     LoginPanel = new Panel(Dpy, Scr, Root, &cfg, testtheme);
 
@@ -185,7 +197,7 @@ void App::Run() {
             LoginPanel->GetInput()->SetName(cfg.getOption("default_user") );
             firstloop = false;
         }
-        
+
         while(Action == WAIT) {
             XNextEvent(Dpy, &event);
             Action = LoginPanel->EventHandler(&event);
@@ -237,7 +249,7 @@ void App::HideCursor() {
 	Cursor		    cursor;
 	cursordata[0]=0;
 	cursorpixmap=XCreateBitmapFromData(Dpy,Root,cursordata,1,1);
-	black.red=0;   
+	black.red=0;
 	black.green=0;
 	black.blue=0;
 	cursor=XCreatePixmapCursor(Dpy,cursorpixmap,cursorpixmap,&black,&black,0,0);
@@ -261,13 +273,20 @@ void App::Login() {
         Su.Login(cfg.getLoginCommand(session).c_str());
         exit(OK_EXIT);
     }
-    
+
+#ifndef XNEST_DEBUG
     CloseLog();
+#endif
 
     // Wait until user is logging out (login process terminates)
     pid_t wpid = -1;
-    while (wpid != pid)
-        wpid = wait(NULL);
+    int status;
+    while (wpid != pid) {
+        wpid = wait(&status);
+    }
+    if (WIFEXITED(status) && WEXITSTATUS(status)) {
+        LoginPanel->Message("Failed to execute login command");
+    }
 
     // Close all clients
     KillAllClients(False);
@@ -279,11 +298,13 @@ void App::Login() {
     // Send TERM signal to clientgroup, if error send KILL
     if(killpg(pid, SIGTERM))
     killpg(pid, SIGKILL);
-    
+
     HideCursor();
-    
+
+#ifndef XNEST_DEBUG
     // Re-activate log file
     OpenLog();
+#endif
 }
 
 
@@ -421,7 +442,7 @@ int App::WaitForServer() {
     int	cycles;
 
     for(cycles = 0; cycles < ncycles; cycles++) {
-        if((Dpy = XOpenDisplay(DISPLAY))) {
+        if((Dpy = XOpenDisplay(DisplayName))) {
             return 1;
         } else {
             if(!ServerTimeout(1, "X server to begin accepting connections"))
@@ -459,7 +480,7 @@ int App::StartServer() {
         if (argc+1 >= MAX_XSERVER_ARGS) {
             // ignore _all_ arguments to make sure the server starts at
             // all
-            argc = 1; 
+            argc = 1;
             break;
         }
     }
@@ -471,8 +492,8 @@ int App::StartServer() {
         signal(SIGTTOU, SIG_IGN);
         signal(SIGUSR1, SIG_IGN);
         setpgid(0,getpid());
-        
-        
+
+
         execvp(server[0], server);
         cerr << APPNAME << ": X server could not be started" << endl;
         exit(ERR_EXIT);
@@ -574,7 +595,7 @@ void App::StopServer() {
 void App::setBackground() {
     string themedir = "";
     if (!testing) {
-        themedir = themedir + THEMESDIR + "/" + cfg.getOption("current_theme");    
+        themedir = themedir + THEMESDIR + "/" + cfg.getOption("current_theme");
     } else {
         themedir = testtheme;
     }

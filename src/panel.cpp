@@ -175,7 +175,7 @@ void Panel::ClearPanel() {
     XFlush(Dpy);
 }
 
-void Panel::Message(char* text) {
+void Panel::Message(const char* text) {
     string cfgX, cfgY;
     XGlyphInfo extents;
     XftDraw *draw = XftDrawCreate(Dpy, Root,
@@ -198,6 +198,14 @@ void Panel::Message(char* text) {
                      shadowXOffset, shadowYOffset);
     XFlush(Dpy);
     XftDrawDestroy(draw);
+}
+
+void Panel::Error(const char* text) {
+    ClosePanel();
+    Message(text);
+    sleep(5);
+    OpenPanel();
+    ClearPanel();
 }
 
 

@@ -34,7 +34,8 @@ public:
     void OpenPanel();
     void ClosePanel();
     void ClearPanel();
-    void Message(char* text);
+    void Message(const char* text);
+    void Error(const char* text);
     Input* GetInput();
     int EventHandler(XEvent* event);
     string getSession();
@@ -48,10 +49,10 @@ private:
     void ShowText();
     void SwitchSession();
     void ShowSession();
-    
+
     void SlimDrawString8(XftDraw* d, XftColor* color, XftFont* font,
                          int x, int y, XftChar8 *string, int len,
-                         XftColor* shadowColor, 
+                         XftColor* shadowColor,
                          int xOffset, int yOffset);
 
     Cfg* cfg;

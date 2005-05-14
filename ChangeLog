@@ -1,7 +1,12 @@
-x.x.x - in progress
+1.2.0 - in progress
     * added theme preview (slim -p /path/to/theme)
     * added JPEG support for panel image
     * added 'center' background type and 'background_color' option
+    * added text shadow
+    * added warning when execution of login command fails
+    * Fix login failure when no shell specified in /etc/passwd
+    * Print error when login command execution fails
+    * add XNEST_DEBUG ifdef's to allow for easy debugging
 
 1.1.0 - 2004.12.09
     * error messages for X11 apps are no longer redirected

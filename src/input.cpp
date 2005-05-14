@@ -2,7 +2,7 @@
    Copyright (C) 1997, 1998 Per Liden
    Copyright (C) 2004-05 Simone Rota <sip@varlock.com>
    Copyright (C) 2004-05 Johannes Winkelmann <jw@tks6.net>
-      
+
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation; either version 2 of the License, or
@@ -34,7 +34,7 @@ char Input::Key(char ascii, KeySym keysym, bool singleInputMode) {
     if(keysym == XK_F11) {
         system(cfg->getOption("screenshot_cmd").c_str());
     }
-    
+
     if  (!singleInputMode && (keysym == XK_Tab || keysym == XK_ISO_Left_Tab)) {
         if (Field == GET_NAME) {
             // Move to next field
@@ -102,6 +102,11 @@ char* Input::GetHiddenPasswd() {
 struct passwd* Input::GetPasswdStruct() {
     struct passwd* pw = getpwnam(NameBuffer);
     endpwent();
+    if (pw->pw_shell[0] == '\0') {
+        setusershell();
+        pw->pw_shell = getusershell();
+        endusershell();
+    }
     return pw;
 }
 
@@ -162,7 +167,7 @@ void Input::SetName(string name) {
     NameBuffer[0] = '\0';
     if(name.size() < INPUT_MAXLENGTH_NAME) {
         strcat(NameBuffer, name.c_str());
-    }     
+    }
     Field = GET_PASSWD;
     Action = WAIT;
 }
