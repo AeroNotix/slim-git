@@ -339,7 +339,6 @@ void Image::Tile(const int w, const int h) {
     area = width * height;
     Crop(0,0,w,h);
 
-
 }
 
 /* Crop the image
@@ -381,6 +380,70 @@ void Image::Crop(const int x, const int y, const int w, const int h) {
     area = w * h;
 
 
+}
+
+/* Center the image in a rectangle of given width aqnd height.
+ * Fills the remaining space (if any) with the hex color
+ */
+void Image::Center(const int w, const int h, const char *hex) {
+
+    unsigned long packed_rgb;
+    sscanf(hex, "%x", &packed_rgb);  
+
+    unsigned long r = packed_rgb>>16;
+    unsigned long g = packed_rgb>>8 & 0xff;
+    unsigned long b = packed_rgb & 0xff;    
+
+	//exit(1);
+    unsigned char *new_rgb = (unsigned char *) malloc(3 * w * h);
+    memset(new_rgb, 0, 3 * w * h);
+
+    area = w * h;
+    for (int i = 0; i < area; i++) {
+        new_rgb[3*i] = r;
+        new_rgb[3*i+1] = g;
+        new_rgb[3*i+2] = b;
+    }
+
+    free(rgb_data);
+    free(png_alpha);
+    rgb_data = new_rgb;
+    png_alpha = NULL;
+    width = w;
+    height = h;
+    
+}
+
+/* Fill the image with the given color and adjust its dimensions
+ * to passed values.
+ */
+void Image::Plain(const int w, const int h, const char *hex) {
+
+    unsigned long packed_rgb;
+    sscanf(hex, "%x", &packed_rgb);  
+
+    unsigned long r = packed_rgb>>16;
+    unsigned long g = packed_rgb>>8 & 0xff;
+    unsigned long b = packed_rgb & 0xff;    
+
+	//exit(1);
+    unsigned char *new_rgb = (unsigned char *) malloc(3 * w * h);
+    memset(new_rgb, 0, 3 * w * h);
+
+    area = w * h;
+    for (int i = 0; i < area; i++) {
+        new_rgb[3*i] = r;
+        new_rgb[3*i+1] = g;
+        new_rgb[3*i+2] = b;
+    }
+
+    free(rgb_data);
+    free(png_alpha);
+    rgb_data = new_rgb;
+    png_alpha = NULL;
+    width = w;
+    height = h;
+    
 }
 
 void

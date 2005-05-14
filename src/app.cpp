@@ -52,7 +52,7 @@ App::App(int argc, char** argv) {
     int tmp;
     ServerPID = -1;
     testing = false;
-
+    
     // Parse command line
     while((tmp = getopt(argc, argv, "vhp:?")) != EOF) {
         switch (tmp) {
@@ -612,8 +612,18 @@ void App::setBackground() {
         string bgstyle = cfg.getOption("background_style");
         if (bgstyle == "stretch") {
             image->Resize(XWidthOfScreen(ScreenOfDisplay(Dpy, Scr)), XHeightOfScreen(ScreenOfDisplay(Dpy, Scr)));
-        } else {
+        } else if (bgstyle == "tile") {
             image->Tile(XWidthOfScreen(ScreenOfDisplay(Dpy, Scr)), XHeightOfScreen(ScreenOfDisplay(Dpy, Scr)));
+        } else if (bgstyle == "center") {
+    	    string hexvalue = cfg.getOption("background_color");
+            hexvalue = hexvalue.substr(1,6);
+    	    image->Center(XWidthOfScreen(ScreenOfDisplay(Dpy, Scr)), XHeightOfScreen(ScreenOfDisplay(Dpy, Scr)),
+        			    hexvalue.c_str());
+        } else { // plain color or error
+    	    string hexvalue = cfg.getOption("background_color");
+            hexvalue = hexvalue.substr(1,6);
+    	    image->Center(XWidthOfScreen(ScreenOfDisplay(Dpy, Scr)), XHeightOfScreen(ScreenOfDisplay(Dpy, Scr)),
+        			    hexvalue.c_str());
         }
         Pixmap p = image->createPixmap(Dpy, Scr, Root);
         XSetWindowBackgroundPixmap(Dpy, Root, p);
