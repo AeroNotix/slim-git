@@ -203,7 +203,7 @@ void Panel::Message(const char* text) {
 void Panel::Error(const char* text) {
     ClosePanel();
     Message(text);
-    sleep(5);
+    sleep(ERROR_DURATION);
     OpenPanel();
     ClearPanel();
 }
