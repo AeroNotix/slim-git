@@ -342,7 +342,6 @@ void Image::Tile(const int w, const int h) {
 }
 
 /* Crop the image
- * Note that cropping removes transparency
  */
 void Image::Crop(const int x, const int y, const int w, const int h) {
 
@@ -354,6 +353,8 @@ void Image::Crop(const int x, const int y, const int w, const int h) {
     int y2 = y + h;
     unsigned char *new_rgb = (unsigned char *) malloc(3 * w * h);
     memset(new_rgb, 0, 3 * w * h);
+    unsigned char *new_alpha = (unsigned char *) malloc(w * h);
+    memset(new_alpha, 0, w * h);
 
     int ipos = 0;
     int opos = 0;
@@ -364,6 +365,8 @@ void Image::Crop(const int x, const int y, const int w, const int h) {
                 for (int k = 0; k < 3; k++) {
                     new_rgb[3*ipos + k] = static_cast<unsigned char> (rgb_data[3*opos + k]);
                 }
+                if (png_alpha != NULL)
+					new_alpha[ipos] = static_cast<unsigned char> (png_alpha[opos]);
                 ipos++;
             }
             opos++;
@@ -373,7 +376,8 @@ void Image::Crop(const int x, const int y, const int w, const int h) {
     free(rgb_data);
     free(png_alpha);
     rgb_data = new_rgb;
-    png_alpha = NULL;
+    if (png_alpha != NULL)
+	    png_alpha = new_alpha;
     width = w;
     height = h;
     area = w * h;
@@ -396,6 +400,24 @@ void Image::Center(const int w, const int h, const char *hex) {
     unsigned char *new_rgb = (unsigned char *) malloc(3 * w * h);
     memset(new_rgb, 0, 3 * w * h);
 
+    int x = (w - width) / 2;
+    int y = (h - height) / 2;
+    
+    if (x<0) {
+    	Crop((width - w)/2,0,w,height);
+        x = 0;
+    }
+    if (y<0) {
+    	Crop(0,(height - h)/2,width,h);
+        y = 0;
+    }
+    int x2 = x + width;
+    int y2 = y + height;
+
+    int ipos = 0;
+    int opos = 0;
+    double tmp;
+
     area = w * h;
     for (int i = 0; i < area; i++) {
         new_rgb[3*i] = r;
@@ -403,31 +425,37 @@ void Image::Center(const int w, const int h, const char *hex) {
         new_rgb[3*i+2] = b;
     }
 
-    // TODO: get x and y, crop if necessary
-    int x = 0;
-	int y = 0;
-
-    int x2 = x + width;
-    int y2 = y + height;
-
-    int ipos = 0;
-    int opos = 0;
-    
-    cout << width << endl;
-    cout << height << endl;
-    exit(1);
-    for (int j = 0; j < w; j++) {
-        for (int i = 0; i < h; i++) {
-            if (j>=y && i>=x && j<y2 && i<x2) {
-                for (int k = 0; k < 3; k++) {
-                    new_rgb[3*ipos + k] = static_cast<unsigned char> (rgb_data[3*opos + k]);
+	if (png_alpha != NULL) {
+        for (int j = 0; j < h; j++) {
+            for (int i = 0; i < w; i++) {
+                if (j>=y && i>=x && j<y2 && i<x2) {
+            	    ipos = j*w + i;
+                    for (int k = 0; k < 3; k++) {
+	                    tmp = rgb_data[3*opos + k]*png_alpha[opos]/255.0
+                              + new_rgb[k]*(1-png_alpha[opos]/255.0);
+                        new_rgb[3*ipos + k] = static_cast<unsigned char> (tmp);
+                    }
+                    opos++;
                 }
-                ipos++;
+
             }
-            opos++;
+        }
+    } else {
+        for (int j = 0; j < h; j++) {
+            for (int i = 0; i < w; i++) {
+                if (j>=y && i>=x && j<y2 && i<x2) {
+            	    ipos = j*w + i;
+                    for (int k = 0; k < 3; k++) {
+	                    tmp = rgb_data[3*opos + k];
+                        new_rgb[3*ipos + k] = static_cast<unsigned char> (tmp);
+                    }
+                    opos++;
+                }
+
+            }
         }
     }
-
+    
     free(rgb_data);
     free(png_alpha);
     rgb_data = new_rgb;
