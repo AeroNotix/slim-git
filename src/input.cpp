@@ -155,10 +155,20 @@ char Input::DeleteLast() {
 
 
 void Input::Reset() {
+    ResetName();
+    ResetPassword();
+    Field = GET_NAME;
+    Action = WAIT;
+}
+
+void Input::ResetName() {
     NameBuffer[0] = '\0';
+    Action = WAIT;
+}
+
+void Input::ResetPassword() {
     PasswdBuffer[0] = '\0';
     HiddenPasswdBuffer[0] = '\0';
-    Field = GET_NAME;
     Action = WAIT;
 }
 

@@ -351,59 +351,88 @@ void Panel::OnKeyPress(XEvent* event) {
     if (keysym == XK_F1) {
         SwitchSession();
     }
-
-    switch(In->GetField()) {
-    case GET_PASSWD:
-        if (strlen(In->GetHiddenPasswd()) == 0){
-            // clear name and welcome label if we just entered the password field
-            if (singleInputMode) {
-                xx = input_name_x;
-                yy = input_name_y;
-                text = In->GetName();
-                XftTextExtents8(Dpy, font, (XftChar8*)text, strlen(text), &extents);
-                XftDrawRect(draw, &bgcolor, xx-2, yy-extents.height-2,
-                            extents.width+4, extents.height+4);
-                XClearWindow(Dpy, Win);
-            ShowText();
+    
+    bool clearField = false;
+    string formerString = "";
+    if ((((XKeyEvent*)event)->state & ControlMask)) {
+        if (keysym == XK_w || keysym == XK_u) {
+            clearField = true;
         }
-        }
-        text = In->GetHiddenPasswd();
-        xx = input_pass_x;
-        yy = input_pass_y;
-        break;
-
-    case GET_NAME:
-        text = In->GetName();
-        xx = input_name_x;
-        yy = input_name_y;
-        break;
     }
 
-    XftTextExtents8(Dpy, font, (XftChar8*)text, strlen(text), &extents);
+    switch(In->GetField()) {
+        case GET_PASSWD:
+            if (strlen(In->GetHiddenPasswd()) == 0){
+                // clear name and welcome label if we just entered the
+                // password field
+                if (singleInputMode) {
+                    xx = input_name_x;
+                    yy = input_name_y;
+                    text = In->GetName();
+                    XftTextExtents8(Dpy, font, (XftChar8*)text, 
+                                    strlen(text), &extents);
+                    XftDrawRect(draw, &bgcolor, xx-2, yy-extents.height-2,
+                                extents.width+4, extents.height+4);
+                    XClearWindow(Dpy, Win);
+                    ShowText();
+                }
+            }
+            
+            if (clearField) {
+                formerString = In->GetHiddenPasswd();
+                In->ResetPassword();
+            }
+            text = In->GetHiddenPasswd();
+            xx = input_pass_x;
+            yy = input_pass_y;
+            break;
 
-    if(del == 0) {
-        // No character deleted
-        XftDrawRect(draw, &bgcolor, xx-1, yy-extents.height-1,
-                    extents.width+2, extents.height+2);
-        SlimDrawString8 (draw, &fgcolor, font, xx, yy,
-                         (XftChar8*)text, strlen(text),
-                         &inputshadowcolor,
-                         inputShadowXOffset, inputShadowYOffset);
-    } else { // Delete char
-        string tmp = "";
-        tmp = tmp + text;
-        tmp = tmp + del;
-        XftTextExtents8(Dpy, font, (XftChar8*)tmp.c_str(), strlen(tmp.c_str()), &extents);
-        char* txth = "Wj"; // get proper maximum height ?
-        XftTextExtents8(Dpy, font, (XftChar8*)txth, strlen(txth), &extents);
-        int mh = extents.height;
-        XftTextExtents8(Dpy, font, (XftChar8*)tmp.c_str(), strlen(tmp.c_str()), &extents);
-        XftDrawRect(draw, &bgcolor, xx-3, yy-mh-3,
-                    extents.width+6, mh+6);
-        SlimDrawString8 (draw, &fgcolor, font, xx, yy,
-                         (XftChar8*)text, strlen(text),
-                         &inputshadowcolor,
-                         inputShadowXOffset, inputShadowYOffset);
+        case GET_NAME:
+            if (clearField) {
+                formerString = In->GetName();
+                In->ResetName();
+            }
+            text = In->GetName();
+            xx = input_name_x;
+            yy = input_name_y;
+            break;
+    }
+
+    char* txth = "Wj"; // get proper maximum height ?
+    XftTextExtents8(Dpy, font, (XftChar8*)txth, strlen(txth), &extents);
+    int maxHeight = extents.height;
+
+    if (clearField) {
+        // clear field
+        XftTextExtents8(Dpy, font, (XftChar8*)formerString.c_str(), 
+                        formerString.length(), &extents);
+        XftDrawRect(draw, &bgcolor, xx-3, yy-maxHeight-3,
+                    extents.width+6, maxHeight+6);
+    } else {
+        XftTextExtents8(Dpy, font, (XftChar8*)text, strlen(text), &extents);
+        if(del == 0) {
+            // No character deleted
+            XftDrawRect(draw, &bgcolor, xx-1, yy-maxHeight-1,
+                        extents.width+2, maxHeight+2);
+            SlimDrawString8 (draw, &fgcolor, font, xx, yy,
+                             (XftChar8*)text, strlen(text),
+                             &inputshadowcolor,
+                             inputShadowXOffset, inputShadowYOffset);
+        } else { // Delete char
+            string tmp = "";
+            tmp = tmp + text;
+            tmp = tmp + del;
+            XftTextExtents8(Dpy, font, (XftChar8*)tmp.c_str(), 
+                            strlen(tmp.c_str()), &extents);
+            XftTextExtents8(Dpy, font, (XftChar8*)tmp.c_str(), 
+                            strlen(tmp.c_str()), &extents);
+            XftDrawRect(draw, &bgcolor, xx-3, yy-maxHeight-3,
+                        extents.width+6, maxHeight+6);
+            SlimDrawString8 (draw, &fgcolor, font, xx, yy,
+                             (XftChar8*)text, strlen(text),
+                             &inputshadowcolor,
+                             inputShadowXOffset, inputShadowYOffset);
+        }
     }
 
     XftDrawDestroy (draw);
