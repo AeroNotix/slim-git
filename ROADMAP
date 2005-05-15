@@ -6,3 +6,4 @@
 2.0.x
 -----
 - restart X server on ctrl-alt-backspace
+- text alignment, to allow to center texts of unknown length (e.g. %host)
