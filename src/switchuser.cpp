@@ -2,7 +2,7 @@
    Copyright (C) 1997, 1998 Per Liden
    Copyright (C) 2004-05 Simone Rota <sip@varlock.com>
    Copyright (C) 2004-05 Johannes Winkelmann <jw@tks6.net>
-      
+
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation; either version 2 of the License, or
@@ -13,9 +13,11 @@
 
 using namespace std;
 
-SwitchUser::SwitchUser(struct passwd *pw, Cfg *c) {
-    Pw = pw;
-    cfg = c;
+SwitchUser::SwitchUser(struct passwd *pw, Cfg *c, const string& display)
+    : Pw(pw),
+      cfg(c),
+      displayName(display)
+{
 }
 
 
@@ -42,7 +44,7 @@ void SwitchUser::SetEnvironment() {
     putenv(StrConcat("USER=", Pw->pw_name));
     putenv(StrConcat("LOGNAME=", Pw->pw_name));
     putenv(StrConcat("PATH=", cfg->getOption("default_path").c_str()));
-    putenv("DISPLAY=:0.0");
+    putenv(StrConcat("DISPLAY=", displayName.c_str()));
     putenv(StrConcat("MAIL="_PATH_MAILDIR"/", Pw->pw_name));
     chdir(Pw->pw_dir);
 }

@@ -291,7 +291,7 @@ void App::Login() {
     pid = fork();
     if(pid == 0) {
         // Login process starts here
-        SwitchUser Su(pw, &cfg);
+        SwitchUser Su(pw, &cfg, DisplayName);
         string session = LoginPanel->getSession();
         Su.Login(cfg.getLoginCommand(session).c_str());
         exit(OK_EXIT);

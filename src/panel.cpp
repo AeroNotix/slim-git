@@ -14,7 +14,7 @@
 
 using namespace std;
 
-Panel::Panel(Display* dpy, int scr, Window root, Cfg* config, 
+Panel::Panel(Display* dpy, int scr, Window root, Cfg* config,
              const string& themedir) {
     // Set display
     Dpy = dpy;
