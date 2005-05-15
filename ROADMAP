@@ -1,3 +1,12 @@
+1.2.0
+-----
+- think about multi-line configuration:
+    current_theme = t1, t2, t3
+    current_theme = t4, t5
+  or
+    current_theme = t1, t2, t3 \
+		    t4, t5
+
 1.2.x
 -----
 - i18n
