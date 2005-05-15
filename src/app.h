@@ -70,7 +70,7 @@ private:
     XpmAttributes BackgroundPixmapAttributes;
     Pixmap BackgroundPixmap;
 
-    void setBackground();
+    void setBackground(const string& themedir);
 	
     bool daemonmode;
 	// For testing themes

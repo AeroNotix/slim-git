@@ -9,6 +9,7 @@
     * add XNEST_DEBUG ifdef's to allow for easy debugging
     * Add support for Ctrl-u and Ctrl-w
     * Add 'vt07' to server arguments if not already specified
+    * Allow 'current_theme' to be a set of themes, choose randomly
 
 1.1.0 - 2004.12.09
     * error messages for X11 apps are no longer redirected

@@ -29,7 +29,8 @@
 
 class Panel {
 public:
-    Panel(Display* dpy, int scr, Window root, Cfg* config, char* themed);
+    Panel(Display* dpy, int scr, Window root, Cfg* config, 
+          const string& themed);
     ~Panel();
     void OpenPanel();
     void ClosePanel();

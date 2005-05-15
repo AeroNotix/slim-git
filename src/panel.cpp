@@ -14,7 +14,8 @@
 
 using namespace std;
 
-Panel::Panel(Display* dpy, int scr, Window root, Cfg* config, char* themed) {
+Panel::Panel(Display* dpy, int scr, Window root, Cfg* config, 
+             const string& themedir) {
     // Set display
     Dpy = dpy;
     Scr = scr;
@@ -22,13 +23,6 @@ Panel::Panel(Display* dpy, int scr, Window root, Cfg* config, char* themed) {
     cfg = config;
 
     session = "";
-
-    themedir = "";
-    if (themed == NULL) {
-        themedir = themedir + THEMESDIR + "/" + cfg->getOption("current_theme");
-    } else {
-        themedir = themed;
-    }
 
     // Init GC
     XGCValues gcv;
@@ -87,7 +81,7 @@ Panel::Panel(Display* dpy, int scr, Window root, Cfg* config, char* themed) {
             exit(ERR_EXIT);
         }
     }
-    
+
     Image* bg = new Image();
     panelpng = themedir +"/background.png";
     loaded = bg->Read(panelpng.c_str());
@@ -351,7 +345,7 @@ void Panel::OnKeyPress(XEvent* event) {
     if (keysym == XK_F1) {
         SwitchSession();
     }
-    
+
     bool clearField = false;
     string formerString = "";
     if ((((XKeyEvent*)event)->state & ControlMask)) {
@@ -369,7 +363,7 @@ void Panel::OnKeyPress(XEvent* event) {
                     xx = input_name_x;
                     yy = input_name_y;
                     text = In->GetName();
-                    XftTextExtents8(Dpy, font, (XftChar8*)text, 
+                    XftTextExtents8(Dpy, font, (XftChar8*)text,
                                     strlen(text), &extents);
                     XftDrawRect(draw, &bgcolor, xx-2, yy-extents.height-2,
                                 extents.width+4, extents.height+4);
@@ -377,7 +371,7 @@ void Panel::OnKeyPress(XEvent* event) {
                     ShowText();
                 }
             }
-            
+
             if (clearField) {
                 formerString = In->GetHiddenPasswd();
                 In->ResetPassword();
@@ -404,7 +398,7 @@ void Panel::OnKeyPress(XEvent* event) {
 
     if (clearField) {
         // clear field
-        XftTextExtents8(Dpy, font, (XftChar8*)formerString.c_str(), 
+        XftTextExtents8(Dpy, font, (XftChar8*)formerString.c_str(),
                         formerString.length(), &extents);
         XftDrawRect(draw, &bgcolor, xx-3, yy-maxHeight-3,
                     extents.width+6, maxHeight+6);
@@ -422,9 +416,9 @@ void Panel::OnKeyPress(XEvent* event) {
             string tmp = "";
             tmp = tmp + text;
             tmp = tmp + del;
-            XftTextExtents8(Dpy, font, (XftChar8*)tmp.c_str(), 
+            XftTextExtents8(Dpy, font, (XftChar8*)tmp.c_str(),
                             strlen(tmp.c_str()), &extents);
-            XftTextExtents8(Dpy, font, (XftChar8*)tmp.c_str(), 
+            XftTextExtents8(Dpy, font, (XftChar8*)tmp.c_str(),
                             strlen(tmp.c_str()), &extents);
             XftDrawRect(draw, &bgcolor, xx-3, yy-maxHeight-3,
                         extents.width+6, maxHeight+6);
