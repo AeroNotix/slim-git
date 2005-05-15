@@ -11,7 +11,7 @@
 -----
 - i18n
 - draw text on pixmap / background image (jw)
-
+- don't choose a non-existing theme in random selection
 
 2.0.x
 -----
