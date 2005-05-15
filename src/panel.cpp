@@ -85,19 +85,21 @@ Panel::Panel(Display* dpy, int scr, Window root, Cfg* config,
     }
 
     Image* bg = new Image();
-    panelpng = themedir +"/background.png";
-    loaded = bg->Read(panelpng.c_str());
-    if (!loaded) { // try jpeg if png failed
-        panelpng = themedir + "/background.jpg";
+    string bgstyle = cfg->getOption("background_style");
+    if (bgstyle != "color") {
+        panelpng = themedir +"/background.png";
         loaded = bg->Read(panelpng.c_str());
-        if (!loaded){
-            cerr << APPNAME << ": could not load background image for theme '" 
-		 << basename(themedir.c_str()) << "'"
-		 << endl;
-            exit(ERR_EXIT);
+        if (!loaded) { // try jpeg if png failed
+            panelpng = themedir + "/background.jpg";
+            loaded = bg->Read(panelpng.c_str());
+            if (!loaded){
+                cerr << APPNAME << ": could not load background image for theme '" 
+		        basename(themedir.c_str()) << "'"
+		        << endl;
+                exit(ERR_EXIT);
+            }
         }
     }
-    string bgstyle = cfg->getOption("background_style");
     if (bgstyle == "stretch") {
         bg->Resize(XWidthOfScreen(ScreenOfDisplay(Dpy, Scr)), XHeightOfScreen(ScreenOfDisplay(Dpy, Scr)));
     } else if (bgstyle == "tile") {
