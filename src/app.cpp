@@ -114,21 +114,21 @@ void App::Run() {
         themefile = themedir + "/slim.theme";
     } else {
         string name = cfg.getOption("current_theme");
-        
+
         // extract random from theme set
         string::size_type pos;
         if ((pos = name.find(",")) != string::npos) {
             if (name[name.length()-1] == ',') {
                 name = name.substr(0, name.length() - 1);
             }
-            
+
             vector<string> themes;
             Cfg::split(themes, name, ',');
             srandom(getpid()+time(NULL));
             int sel = random() % themes.size();
             name = Cfg::Trim(themes[sel]);
         }
-        
+
         themedir = themefile + THEMESDIR +"/" + name;
         themefile = themedir + "/slim.theme";
     }
@@ -370,7 +370,7 @@ void App::Console() {
     int fonty = 15;
     int width = (XWidthOfScreen(ScreenOfDisplay(Dpy, Scr)) - (posx * 2)) / fontx;
     int height = (XHeightOfScreen(ScreenOfDisplay(Dpy, Scr)) - (posy * 2)) / fonty;
-    
+
     // Execute console
     const char* cmd = cfg.getOption("console_cmd").c_str();
     char *tmp = new char[strlen(cmd) + 60];
@@ -515,7 +515,7 @@ int App::StartServer() {
             break;
         }
     }
-    if (!hasVtSet) {
+    if (!hasVtSet && daemonmode) {
         server[argc++] = "vt07";
     }
     server[argc] = NULL;
