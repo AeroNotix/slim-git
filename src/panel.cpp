@@ -77,7 +77,9 @@ Panel::Panel(Display* dpy, int scr, Window root, Cfg* config,
         panelpng = themedir + "/panel.jpg";
         loaded = image->Read(panelpng.c_str());
         if (!loaded) {
-            cerr << APPNAME << ": could not load panel image" << endl;
+            cerr << APPNAME << ": could not load panel image for theme '" 
+		 << basename(themedir.c_str()) << "'"
+		 << endl;
             exit(ERR_EXIT);
         }
     }
@@ -89,7 +91,9 @@ Panel::Panel(Display* dpy, int scr, Window root, Cfg* config,
         panelpng = themedir + "/background.jpg";
         loaded = bg->Read(panelpng.c_str());
         if (!loaded){
-            cerr << APPNAME << ": could not load background image" << endl;
+            cerr << APPNAME << ": could not load background image for theme '" 
+		 << basename(themedir.c_str()) << "'"
+		 << endl;
             exit(ERR_EXIT);
         }
     }
