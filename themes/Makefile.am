@@ -1,1 +1,1 @@
-SUBDIRS = default leaves curvy pirate
+SUBDIRS = default

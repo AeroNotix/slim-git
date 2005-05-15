@@ -1,5 +1,5 @@
 AC_INIT(src/main.cpp)
-AM_INIT_AUTOMAKE(slim,1.1.0)
+AM_INIT_AUTOMAKE(slim,1.2.0rc1)
 
 AC_PROG_CC
 AC_PROG_CXX
@@ -27,9 +27,7 @@ AC_PREFIX_DEFAULT(/usr)
 
 AC_OUTPUT(Makefile
           src/Makefile
+          doc/Makefile
           orig/Makefile
           themes/Makefile
-          themes/default/Makefile
-          themes/leaves/Makefile
-          themes/curvy/Makefile
-          themes/pirate/Makefile)
+          themes/default/Makefile)

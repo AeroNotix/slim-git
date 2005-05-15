@@ -20,8 +20,14 @@ INSTALLATION
     see the INSTALL file
     
 USAGE
+
+	To launch slim, execute run the slim binary,
+    followed by the -d option if you want it to
+    run as a daemon in the background (reccommended)
+    
     enter username and password to login. The ~/.xinitrc
-    file is executed by default.
+    file is executed by default, so be sure to have a working
+    .xinitrc file in your home.
     
     Special usernames (commands configurable in the config file):
     - console: start console login

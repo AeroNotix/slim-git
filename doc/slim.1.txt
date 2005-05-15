@@ -1,0 +1,38 @@
+NAME
+  slim - Simple LogIn Manager
+
+SYNOPSIS
+  slim [options] [<arguments>]
+
+DESCRIPTION
+  SLiM is a lightweight login manager for X11, allowing the initialization
+  of a graphical session by entring username and password in a login screen.
+
+OPTIONS
+  -d  run as a daemon
+  -p /path/to/theme  display a preview of the theme. An already running X11 session
+     is required for theme preview.
+  -h  display a brief help message
+  -v  display version information
+  
+EXAMPLES
+  slim -d  run slim in daemon mode
+  slim -p /usr/share/slim/themes/default  preview of the default theme
+
+STARTING SLIM AT BOOT
+  Please refer to documentation of your Operating System to make slim
+  automatically startup after the system boots.
+
+CONFIGURATION
+  Global configuration is stored in the /etc/slim.conf file. See the comments
+  inside the file for a detailed explanation of the options.
+
+AUTHORS 
+ Simone Rota <sip@varlock.com>
+
+ Johannes Winkelmann <jw@tks6.net>
+
+SEE ALSO
+  See the online documentation at the SLiM web site for further information
+  on themes, FAQs, etc.
+  
