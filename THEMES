@@ -1,13 +1,13 @@
 Quick THEME howto for SLiM
 
-Some basic information regarding the login.app theme format.
+Some basic information regarding the slim theme format.
 Read this file if you plan to make some theme for
 the program, and of course have a look at the included themes
 
 GENERAL CONCEPT
     A SLiM theme essentially consists of:
     - a background image (background.png or background.jpg)
-    - a panel image (panel.png)
+    - a panel image (panel.png or panel.jpg)
     - input box(es) and messages and their placement
       and properties (slim.theme)
     
@@ -23,7 +23,7 @@ SUPPORTED FORMATS
       of the screen.
     
 OPTIONS
-    The following is an example login.app.theme file    
+    The following is an example slim.theme file    
     ----------------------------------------------------------------------
     # Color, font, position for the messages (ie: shutting down)
     msg_color               #FFFFFF
