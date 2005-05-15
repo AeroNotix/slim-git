@@ -10,9 +10,11 @@
 1.2.x
 -----
 - i18n
+- draw text on pixmap / background image (jw)
 
 
 2.0.x
 -----
 - restart X server on ctrl-alt-backspace
+- allow switching theme on the fly if a set is specified in slim.conf
 - text alignment, to allow to center texts of unknown length (e.g. %host)
