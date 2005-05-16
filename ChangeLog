@@ -1,4 +1,4 @@
-1.2.0 - in progress
+1.2.0 - 2005.05.16
     * added theme preview (slim -p /path/to/theme)
     * added JPEG support for panel image
     * added 'center' background type and 'background_color' option
@@ -11,6 +11,7 @@
     * Add 'vt07' to server arguments if not already specified
     * Removes daemon option from the config file. Use slim -d
     * Allow 'current_theme' to be a set of themes, choose randomly
+    * Change default theme
 
 1.1.0 - 2004.12.09
     * error messages for X11 apps are no longer redirected
