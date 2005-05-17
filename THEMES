@@ -48,10 +48,9 @@ OPTIONS
     input_pass_x            40
     input_pass_y            120
     
-    # Input controls font and foreground/background color
+    # Input controls font and color
     input_font          	Verdana:size=12
-    input_bgcolor           #FFFFFF
-    input_fgcolor           #000000
+    input_color             #000000
 
     # Welcome message position. (relative to the panel)
     # use -1 for both values or comment the options to disable
