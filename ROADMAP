@@ -8,8 +8,6 @@
   or
     current_theme = t1, t2, t3 \
 		    t4, t5
-- normalize themes: input_fgcolor -> input_color
-
 
 2.0.x
 -----
