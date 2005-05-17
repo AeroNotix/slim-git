@@ -42,7 +42,7 @@ Panel::Panel(Display* dpy, int scr, Window root, Cfg* config,
     Visual* visual = DefaultVisual(Dpy, Scr);
     Colormap colormap = DefaultColormap(Dpy, Scr);
     // NOTE: using XftColorAllocValue() would be a better solution. Lazy me.
-    XftColorAllocName(Dpy, visual, colormap, cfg->getOption("input_fgcolor").c_str(), &fgcolor);
+    XftColorAllocName(Dpy, visual, colormap, cfg->getOption("input_color").c_str(), &inputcolor);
     XftColorAllocName(Dpy, visual, colormap, cfg->getOption("input_shadow_color").c_str(), &inputshadowcolor);
     XftColorAllocName(Dpy, visual, colormap, cfg->getOption("welcome_color").c_str(), &welcomecolor);
     XftColorAllocName(Dpy, visual, colormap, cfg->getOption("welcome_shadow_color").c_str(), &welcomeshadowcolor);
@@ -133,7 +133,7 @@ Panel::Panel(Display* dpy, int scr, Window root, Cfg* config,
 }
 
 Panel::~Panel() {
-    XftColorFree (Dpy, DefaultVisual(Dpy, Scr), DefaultColormap(Dpy, Scr), &fgcolor);
+    XftColorFree (Dpy, DefaultVisual(Dpy, Scr), DefaultColormap(Dpy, Scr), &inputcolor);
     XftColorFree (Dpy, DefaultVisual(Dpy, Scr), DefaultColormap(Dpy, Scr), &msgcolor);
     XftColorFree (Dpy, DefaultVisual(Dpy, Scr), DefaultColormap(Dpy, Scr), &welcomecolor);
     XftColorFree (Dpy, DefaultVisual(Dpy, Scr), DefaultColormap(Dpy, Scr), &entercolor);
@@ -266,7 +266,7 @@ void Panel::Cursor(int visible) {
 
     if(visible == SHOW) {
         XSetForeground(Dpy, TextGC, 
-                       GetColor(cfg->getOption("input_fgcolor").c_str()));
+                       GetColor(cfg->getOption("input_color").c_str()));
         XDrawLine(Dpy, Win, TextGC,
                   xx+1, yy-cheight,
                   xx+1, y2);
@@ -298,24 +298,26 @@ void Panel::OnExpose(XEvent* event) {
     XftDraw *draw = XftDrawCreate(Dpy, Win,
                         DefaultVisual(Dpy, Scr), DefaultColormap(Dpy, Scr));
     if (input_pass_x != input_name_x || input_pass_y != input_name_y){
-        SlimDrawString8 (draw, &fgcolor, font, input_name_x, input_name_y,
+        SlimDrawString8 (draw, &inputcolor, font, input_name_x, input_name_y,
                          (XftChar8*)name, strlen(name),
                          &inputshadowcolor,
                          inputShadowXOffset, inputShadowYOffset);
-        SlimDrawString8 (draw, &fgcolor, font, input_pass_x, input_pass_y,
+        SlimDrawString8 (draw, &inputcolor, font, input_pass_x, input_pass_y,
                          (XftChar8*)passwd, strlen(passwd),
                          &inputshadowcolor,
                          inputShadowXOffset, inputShadowYOffset);
     } else { //single input mode
         switch(In->GetField()) {
             case GET_PASSWD:
-                SlimDrawString8 (draw, &fgcolor, font, input_pass_x, input_pass_y,
+                SlimDrawString8 (draw, &inputcolor, font, 
+                                 input_pass_x, input_pass_y,
                                  (XftChar8*)passwd, strlen(passwd),
                                  &inputshadowcolor,
                                  inputShadowXOffset, inputShadowYOffset);
                 break;
             case GET_NAME:
-                SlimDrawString8 (draw, &fgcolor, font, input_name_x, input_name_y,
+                SlimDrawString8 (draw, &inputcolor, font, 
+                                 input_name_x, input_name_y,
                                  (XftChar8*)name, strlen(name),
                                  &inputshadowcolor,
                                  inputShadowXOffset, inputShadowYOffset);
@@ -416,7 +418,7 @@ void Panel::OnKeyPress(XEvent* event) {
                maxLength+6, maxHeight+6, false);
 
     if (!clearField) {
-        SlimDrawString8 (draw, &fgcolor, font, xx, yy,
+        SlimDrawString8 (draw, &inputcolor, font, xx, yy,
                          (XftChar8*)text, strlen(text),
                          &inputshadowcolor,
                          inputShadowXOffset, inputShadowYOffset);

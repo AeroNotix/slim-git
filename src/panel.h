@@ -66,7 +66,6 @@ private:
     int X, Y;
     GC TextGC;
     XftFont* font;
-    XftColor fgcolor; // TODO: rename to inputcolor
     XftColor inputshadowcolor;
     XftColor inputcolor;
     XftColor msgcolor;

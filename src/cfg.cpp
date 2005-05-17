@@ -43,7 +43,7 @@ Cfg::Cfg() {
     options.insert(option("input_pass_x","-1")); // default is single inputbox
     options.insert(option("input_pass_y","-1"));
     options.insert(option("input_font","Verdana:size=11"));
-    options.insert(option("input_fgcolor","#000000"));
+    options.insert(option("input_color", "#000000"));
     options.insert(option("input_cursor_height","20"));
     options.insert(option("input_maxlength_name","20"));
     options.insert(option("input_maxlength_passwd","20"));
