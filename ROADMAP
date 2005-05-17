@@ -1,17 +1,15 @@
-1.2.0
+1.2.x
 -----
+- i18n
+- don't choose a non-existing theme in random selection
 - think about multi-line configuration:
     current_theme = t1, t2, t3
     current_theme = t4, t5
   or
     current_theme = t1, t2, t3 \
 		    t4, t5
+- normalize themes: input_fgcolor -> input_color
 
-1.2.x
------
-- i18n
-- draw text on pixmap / background image (jw)
-- don't choose a non-existing theme in random selection
 
 2.0.x
 -----

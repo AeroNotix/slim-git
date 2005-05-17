@@ -1,3 +1,6 @@
+1.2.1 - 2005.05.17
+    * draw input directly on panel
+
 1.2.0 - 2005.05.16
     * added theme preview (slim -p /path/to/theme)
     * added JPEG support for panel image
