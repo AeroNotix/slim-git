@@ -265,14 +265,14 @@ void Panel::Cursor(int visible) {
     xx += extents.width;
 
     if(visible == SHOW) {
-        XSetForeground(Dpy, TextGC, 
+        XSetForeground(Dpy, TextGC,
                        GetColor(cfg->getOption("input_color").c_str()));
         XDrawLine(Dpy, Win, TextGC,
                   xx+1, yy-cheight,
                   xx+1, y2);
     } else {
         XClearArea(Dpy, Win, xx+1, yy-cheight,
-                   1, cheight, false);
+                   1, y2-(yy-cheight)+1, false);
     }
 }
 
@@ -309,14 +309,14 @@ void Panel::OnExpose(XEvent* event) {
     } else { //single input mode
         switch(In->GetField()) {
             case GET_PASSWD:
-                SlimDrawString8 (draw, &inputcolor, font, 
+                SlimDrawString8 (draw, &inputcolor, font,
                                  input_pass_x, input_pass_y,
                                  (XftChar8*)passwd, strlen(passwd),
                                  &inputshadowcolor,
                                  inputShadowXOffset, inputShadowYOffset);
                 break;
             case GET_NAME:
-                SlimDrawString8 (draw, &inputcolor, font, 
+                SlimDrawString8 (draw, &inputcolor, font,
                                  input_name_x, input_name_y,
                                  (XftChar8*)name, strlen(name),
                                  &inputshadowcolor,
