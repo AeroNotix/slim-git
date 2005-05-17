@@ -272,7 +272,7 @@ void Panel::Cursor(int visible) {
                   xx+1, y2);
     } else {
         XClearArea(Dpy, Win, xx+1, yy-cheight,
-                   xx+1, y2, false);
+                   1, cheight, false);
     }
 }
 
