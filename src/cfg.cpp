@@ -43,7 +43,6 @@ Cfg::Cfg() {
     options.insert(option("input_pass_x","-1")); // default is single inputbox
     options.insert(option("input_pass_y","-1"));
     options.insert(option("input_font","Verdana:size=11"));
-    options.insert(option("input_bgcolor","#FFFFFF"));
     options.insert(option("input_fgcolor","#000000"));
     options.insert(option("input_cursor_height","20"));
     options.insert(option("input_maxlength_name","20"));
@@ -51,7 +50,7 @@ Cfg::Cfg() {
     options.insert(option("input_shadow_xoffset", "0"));
     options.insert(option("input_shadow_yoffset", "0"));
     options.insert(option("input_shadow_color","#FFFFFF"));
-    
+
     options.insert(option("welcome_font","Verdana:size=14"));
     options.insert(option("welcome_color","#FFFFFF"));
     options.insert(option("welcome_x","-1"));
@@ -59,16 +58,16 @@ Cfg::Cfg() {
     options.insert(option("welcome_shadow_xoffset", "0"));
     options.insert(option("welcome_shadow_yoffset", "0"));
     options.insert(option("welcome_shadow_color","#FFFFFF"));
-    
+
     options.insert(option("intro_msg",""));
     options.insert(option("intro_font","Verdana:size=14"));
     options.insert(option("intro_color","#FFFFFF"));
     options.insert(option("intro_x","-1"));
     options.insert(option("intro_y","-1"));
-    
+
     options.insert(option("background_style","stretch"));
     options.insert(option("background_color","#CCCCCC"));
-    
+
     options.insert(option("username_font","Verdana:size=12"));
     options.insert(option("username_color","#FFFFFF"));
     options.insert(option("username_x","-1"));
@@ -77,11 +76,11 @@ Cfg::Cfg() {
     options.insert(option("username_shadow_xoffset", "0"));
     options.insert(option("username_shadow_yoffset", "0"));
     options.insert(option("username_shadow_color","#FFFFFF"));
-    
+
     options.insert(option("password_x","-1"));
     options.insert(option("password_y","-1"));
     options.insert(option("password_msg","Please enter your password"));
-    
+
     options.insert(option("msg_color","#FFFFFF"));
     options.insert(option("msg_font","Verdana:size=16:bold"));
     options.insert(option("msg_x","40"));

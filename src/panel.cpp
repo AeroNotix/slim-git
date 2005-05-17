@@ -44,7 +44,6 @@ Panel::Panel(Display* dpy, int scr, Window root, Cfg* config,
     // NOTE: using XftColorAllocValue() would be a better solution. Lazy me.
     XftColorAllocName(Dpy, visual, colormap, cfg->getOption("input_fgcolor").c_str(), &fgcolor);
     XftColorAllocName(Dpy, visual, colormap, cfg->getOption("input_shadow_color").c_str(), &inputshadowcolor);
-    XftColorAllocName(Dpy, visual, colormap, cfg->getOption("input_bgcolor").c_str(), &bgcolor);
     XftColorAllocName(Dpy, visual, colormap, cfg->getOption("welcome_color").c_str(), &welcomecolor);
     XftColorAllocName(Dpy, visual, colormap, cfg->getOption("welcome_shadow_color").c_str(), &welcomeshadowcolor);
     XftColorAllocName(Dpy, visual, colormap, cfg->getOption("username_color").c_str(), &entercolor);
@@ -77,7 +76,7 @@ Panel::Panel(Display* dpy, int scr, Window root, Cfg* config,
         panelpng = themedir + "/panel.jpg";
         loaded = image->Read(panelpng.c_str());
         if (!loaded) {
-            cerr << APPNAME << ": could not load panel image for theme '" 
+            cerr << APPNAME << ": could not load panel image for theme '"
 		 << basename(themedir.c_str()) << "'"
 		 << endl;
             exit(ERR_EXIT);
@@ -93,7 +92,7 @@ Panel::Panel(Display* dpy, int scr, Window root, Cfg* config,
             panelpng = themedir + "/background.jpg";
             loaded = bg->Read(panelpng.c_str());
             if (!loaded){
-                cerr << APPNAME << ": could not load background image for theme '" 
+                cerr << APPNAME << ": could not load background image for theme '"
 		        << basename(themedir.c_str()) << "'"
 		        << endl;
                 exit(ERR_EXIT);
@@ -135,7 +134,6 @@ Panel::Panel(Display* dpy, int scr, Window root, Cfg* config,
 
 Panel::~Panel() {
     XftColorFree (Dpy, DefaultVisual(Dpy, Scr), DefaultColormap(Dpy, Scr), &fgcolor);
-    XftColorFree (Dpy, DefaultVisual(Dpy, Scr), DefaultColormap(Dpy, Scr), &bgcolor);
     XftColorFree (Dpy, DefaultVisual(Dpy, Scr), DefaultColormap(Dpy, Scr), &msgcolor);
     XftColorFree (Dpy, DefaultVisual(Dpy, Scr), DefaultColormap(Dpy, Scr), &welcomecolor);
     XftColorFree (Dpy, DefaultVisual(Dpy, Scr), DefaultColormap(Dpy, Scr), &entercolor);
@@ -245,23 +243,19 @@ void Panel::Cursor(int visible) {
     char* txth = "Wj"; // used to get cursor height
 
     switch(In->GetField()) {
-    case GET_PASSWD:
-        text = In->GetHiddenPasswd();
-        xx = input_pass_x;
-        yy = input_pass_y;
-        break;
+        case GET_PASSWD:
+            text = In->GetHiddenPasswd();
+            xx = input_pass_x;
+            yy = input_pass_y;
+            break;
 
-    case GET_NAME:
-        text = In->GetName();
-        xx = input_name_x;
-        yy = input_name_y;
-        break;
+        case GET_NAME:
+            text = In->GetName();
+            xx = input_name_x;
+            yy = input_name_y;
+            break;
     }
 
-    if(visible == SHOW)
-        XSetForeground(Dpy, TextGC, GetColor(cfg->getOption("input_fgcolor").c_str()));
-    else
-        XSetForeground(Dpy, TextGC, GetColor(cfg->getOption("input_bgcolor").c_str()));
 
     XGlyphInfo extents;
     XftTextExtents8(Dpy, font, (XftChar8*)txth, strlen(txth), &extents);
@@ -270,9 +264,16 @@ void Panel::Cursor(int visible) {
     XftTextExtents8(Dpy, font, (XftChar8*)text, strlen(text), &extents);
     xx += extents.width;
 
-    XDrawLine(Dpy, Win, TextGC,
-              xx+1, yy-cheight,
-              xx+1, y2);
+    if(visible == SHOW) {
+        XSetForeground(Dpy, TextGC, 
+                       GetColor(cfg->getOption("input_fgcolor").c_str()));
+        XDrawLine(Dpy, Win, TextGC,
+                  xx+1, yy-cheight,
+                  xx+1, y2);
+    } else {
+        XClearArea(Dpy, Win, xx+1, yy-cheight,
+                   xx+1, y2, false);
+    }
 }
 
 int Panel::EventHandler(XEvent* event) {
@@ -371,8 +372,6 @@ void Panel::OnKeyPress(XEvent* event) {
                     text = In->GetName();
                     XftTextExtents8(Dpy, font, (XftChar8*)text,
                                     strlen(text), &extents);
-                    XftDrawRect(draw, &bgcolor, xx-2, yy-extents.height-2,
-                                extents.width+4, extents.height+4);
                     XClearWindow(Dpy, Win);
                     ShowText();
                 }
@@ -402,42 +401,29 @@ void Panel::OnKeyPress(XEvent* event) {
     XftTextExtents8(Dpy, font, (XftChar8*)txth, strlen(txth), &extents);
     int maxHeight = extents.height;
 
+    string tmp = "";
     if (clearField) {
-        // clear field
-        XftTextExtents8(Dpy, font, (XftChar8*)formerString.c_str(),
-                        formerString.length(), &extents);
-        XftDrawRect(draw, &bgcolor, xx-3, yy-maxHeight-3,
-                    extents.width+6, maxHeight+6);
+        tmp = formerString;
     } else {
-        XftTextExtents8(Dpy, font, (XftChar8*)text, strlen(text), &extents);
-        if(del == 0) {
-            // No character deleted
-            XftDrawRect(draw, &bgcolor, xx-1, yy-maxHeight-1,
-                        extents.width+2, maxHeight+2);
-            SlimDrawString8 (draw, &fgcolor, font, xx, yy,
-                             (XftChar8*)text, strlen(text),
-                             &inputshadowcolor,
-                             inputShadowXOffset, inputShadowYOffset);
-        } else { // Delete char
-            string tmp = "";
-            tmp = tmp + text;
-            tmp = tmp + del;
-            XftTextExtents8(Dpy, font, (XftChar8*)tmp.c_str(),
-                            strlen(tmp.c_str()), &extents);
-            XftTextExtents8(Dpy, font, (XftChar8*)tmp.c_str(),
-                            strlen(tmp.c_str()), &extents);
-            XftDrawRect(draw, &bgcolor, xx-3, yy-maxHeight-3,
-                        extents.width+6, maxHeight+6);
-            SlimDrawString8 (draw, &fgcolor, font, xx, yy,
-                             (XftChar8*)text, strlen(text),
-                             &inputshadowcolor,
-                             inputShadowXOffset, inputShadowYOffset);
-        }
+        tmp = text;
+        tmp = tmp + del;
+    }
+    XftTextExtents8(Dpy, font, (XftChar8*)tmp.c_str(),
+                    strlen(tmp.c_str()), &extents);
+    int maxLength = extents.width;
+
+    XClearArea(Dpy, Win, xx-3, yy-maxHeight-3,
+               maxLength+6, maxHeight+6, false);
+
+    if (!clearField) {
+        SlimDrawString8 (draw, &fgcolor, font, xx, yy,
+                         (XftChar8*)text, strlen(text),
+                         &inputshadowcolor,
+                         inputShadowXOffset, inputShadowYOffset);
     }
 
     XftDrawDestroy (draw);
     Cursor(SHOW);
-
 }
 
 // Draw welcome and "enter username" message

@@ -29,7 +29,7 @@
 
 class Panel {
 public:
-    Panel(Display* dpy, int scr, Window root, Cfg* config, 
+    Panel(Display* dpy, int scr, Window root, Cfg* config,
           const string& themed);
     ~Panel();
     void OpenPanel();
@@ -66,9 +66,8 @@ private:
     int X, Y;
     GC TextGC;
     XftFont* font;
-    XftColor fgcolor;
+    XftColor fgcolor; // TODO: rename to inputcolor
     XftColor inputshadowcolor;
-    XftColor bgcolor;
     XftColor inputcolor;
     XftColor msgcolor;
     XftColor msgshadowcolor;
