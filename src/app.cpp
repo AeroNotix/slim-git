@@ -109,31 +109,39 @@ void App::Run() {
     cfg.readConf(CFGFILE);
     string themefile = "";
     string themedir = "";
+    string name = "";
     if (testing) {
-        themedir = themefile + testtheme;
-        themefile = themedir + "/slim.theme";
+        name = testtheme;
     } else {
-        string name = cfg.getOption("current_theme");
-
-        // extract random from theme set
+        name = cfg.getOption("current_theme");
         string::size_type pos;
-        if ((pos = name.find(",")) != string::npos) {
-            if (name[name.length()-1] == ',') {
-                name = name.substr(0, name.length() - 1);
+        if ((pos = name.find(",")) != string::npos) {            
+            // input is a set
+            name = findValidRandomTheme(name);
+            if (name == "") {
+                name = "default";
             }
-
-            vector<string> themes;
-            Cfg::split(themes, name, ',');
-            srandom(getpid()+time(NULL));
-            int sel = random() % themes.size();
-            name = Cfg::Trim(themes[sel]);
-        }
-
-        themedir = themefile + THEMESDIR +"/" + name;
-        themefile = themedir + "/slim.theme";
+        }        
     }
-
-    cfg.readConf(themefile);
+    
+    bool loaded = false;
+    while (!loaded) {
+        themedir = string(THEMESDIR) + "/" + name;
+        themefile = themedir + THEMESFILE;
+        if (!cfg.readConf(themefile)) {
+            if (name == "default") {
+                cerr << APPNAME << ": Failed to open default theme file " 
+                     << themefile << endl;
+                exit(ERR_EXIT);
+            } else {
+                cerr << APPNAME << ": Invalid theme in config: " 
+                     << name << endl;
+                name = "default";
+            }
+        } else {
+            loaded = true;
+        }
+    }
 
     if (!testing) {
         // Create lock file
@@ -178,6 +186,8 @@ void App::Run() {
     // Get screen and root window
     Scr = DefaultScreen(Dpy);
     Root = RootWindow(Dpy, Scr);
+    
+    blankScreen();
 
     // for tests we use a standard window
     if (testing) {
@@ -239,21 +249,21 @@ void App::Run() {
             LoginPanel->ClosePanel();
 
             switch(Action) {
-            case LOGIN:
-                Login();
-                break;
-            case CONSOLE:
-                Console();
-                break;
-            case REBOOT:
-                Reboot();
-                break;
-            case HALT:
-                Halt();
-                break;
-            case EXIT:
-                Exit();
-                break;
+                case LOGIN:
+                    Login();
+                    break;
+                case CONSOLE:
+                    Console();
+                    break;
+                case REBOOT:
+                    Reboot();
+                    break;
+                case HALT:
+                    Halt();
+                    break;
+                case EXIT:
+                    Exit();
+                    break;
             }
         }
     }
@@ -626,6 +636,20 @@ void App::StopServer() {
     cerr << endl;
 }
 
+
+void App::blankScreen()
+{
+    GC gc = XCreateGC(Dpy, Root, 0, 0);
+    XSetBackground(Dpy, gc, BlackPixel(Dpy, Scr));
+    XSetForeground(Dpy, gc, BlackPixel(Dpy, Scr));
+    XFillRectangle(Dpy, Root, gc, 0, 0, 
+                   XWidthOfScreen(ScreenOfDisplay(Dpy, Scr)), 
+                   XHeightOfScreen(ScreenOfDisplay(Dpy, Scr)));
+    XFlush(Dpy);
+    XFreeGC(Dpy, gc);
+
+}
+
 void App::setBackground(const string& themedir) {
     string filename;
     filename = themedir + "/background.png";
@@ -700,4 +724,34 @@ void App::OpenLog() {
 void App::CloseLog(){
     fclose(stderr);
     fclose(stdout);
+}
+
+string App::findValidRandomTheme(const string& set)
+{
+    // extract random theme from theme set; return empty string on error
+    string name = set;
+    struct stat buf;
+    
+    if (name[name.length()-1] == ',') {
+        name = name.substr(0, name.length() - 1);
+    }
+
+    srandom(getpid()+time(NULL));        
+
+    vector<string> themes;
+    string themefile;
+    Cfg::split(themes, name, ',');        
+    do {
+        int sel = random() % themes.size();
+        
+        name = Cfg::Trim(themes[sel]);
+        themefile = string(THEMESDIR) +"/" + name + THEMESFILE;
+        if (stat(themefile.c_str(), &buf) != 0) {
+            themes.erase(find(themes.begin(), themes.end(), name));
+            cerr << APPNAME << ": Invalid theme in config: " 
+                 << name << endl;
+            name = "";
+        }
+    } while (name == "" && themes.size());
+    return name;
 }

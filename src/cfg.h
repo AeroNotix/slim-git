@@ -20,6 +20,7 @@
 
 #define CFGFILE SYSCONFDIR"/slim.conf"
 #define THEMESDIR PKGDATADIR"/themes"
+#define THEMESFILE "/slim.theme"
 
 using namespace std;
 
@@ -27,7 +28,7 @@ class Cfg {
 
 public:
     Cfg();
-    void readConf(string configfile);
+    bool readConf(string configfile);
     string parseOption(string line, string option);
     const string& getError() const;
     string& getOption(string option);
