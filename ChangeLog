@@ -1,3 +1,10 @@
+1.2.2 - 2005.05.21
+    * fix panel drawing on screens <= 1024x768
+    * Don't start X server unless valid theme found
+    * revert to 'default' of invalid theme specified
+    * try all themes from a set if one doesn't work
+
+
 1.2.1 - 2005.05.17
     * draw input directly on panel
 
