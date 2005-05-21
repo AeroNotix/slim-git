@@ -35,6 +35,7 @@ void SwitchUser::Login(const char* cmd) {
 
 void SwitchUser::SetEnvironment() {
     char *term = getenv("TERM");
+    char** environ;
     environ = (char **) new char*[2];
     environ[0] = 0;
     if(term)
@@ -55,7 +56,7 @@ void SwitchUser::SetUserId() {
             (initgroups(Pw->pw_name, Pw->pw_gid) != 0) ||
             (setgid(Pw->pw_gid) != 0) ||
             (setuid(Pw->pw_uid) != 0) ) {
-        cerr << APPNAME << ": could not switch user id" << endl;
+        cerr << PACKAGE << ": could not switch user id" << endl;
         exit(ERR_EXIT);
     }
 }
@@ -74,7 +75,7 @@ void SwitchUser::Execute(const char* cmd) {
     args[3] = 0;
 
     execv(shell, args);
-    cerr << APPNAME << ": could not execute login command" << endl;
+    cerr << PACKAGE << ": could not execute login command" << endl;
 }
 
 

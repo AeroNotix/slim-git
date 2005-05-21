@@ -23,6 +23,10 @@ if test "x$ac_cv_lib_png_png_info_init" != "xyes" ; then
          exit 1
 fi
 
+AC_CONFIG_HEADERS(config.h)
+AC_CHECK_HEADERS(libgen.h)
+AC_CHECK_FUNCS(basename dirname)
+
 AC_PREFIX_DEFAULT(/usr)
 
 AC_OUTPUT(Makefile

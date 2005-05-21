@@ -11,6 +11,8 @@
 #ifndef _CFG_H_
 #define _CFG_H_
 
+#include "../config.h"
+
 #include <string>
 #include <map>
 #include <vector>

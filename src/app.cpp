@@ -24,7 +24,7 @@
 extern App* LoginApp;
 
 void CatchSignal(int sig) {
-    cerr << APPNAME << ": unexpected signal " << sig << endl;
+    cerr << PACKAGE << ": unexpected signal " << sig << endl;
     LoginApp->StopServer();
     LoginApp->RemoveLock();
     exit(ERR_EXIT);
@@ -69,13 +69,13 @@ App::App(int argc, char** argv) {
             daemonmode = true;
             break;
         case 'v':	// Version
-            cout << APPNAME << " version " << VERSION << endl;
+            cout << PACKAGE << " version " << VERSION << endl;
             exit(OK_EXIT);
             break;
         case '?':	// Illegal
             cerr << endl;
         case 'h':   // Help
-            cerr << "usage:  " << APPNAME << " [option ...]" << endl
+            cerr << "usage:  " << PACKAGE << " [option ...]" << endl
             << "options:" << endl
             << "    -d" << endl
             << "    -v" << endl
@@ -86,7 +86,7 @@ App::App(int argc, char** argv) {
     }
 
     if (getuid() != 0 && !testing) {
-        cerr << APPNAME << ": only root can run this program" << endl;
+        cerr << PACKAGE << ": only root can run this program" << endl;
         exit(ERR_EXIT);
     }
 
@@ -156,7 +156,7 @@ void App::Run() {
         // Daemonize
         if (daemonmode) {
             if (daemon(0, 1) == -1) {
-                cerr << APPNAME << ": " << strerror(errno) << endl;
+                cerr << PACKAGE << ": " << strerror(errno) << endl;
                 exit(ERR_EXIT);
             }
         }
@@ -169,7 +169,7 @@ void App::Run() {
 
     // Open display
     if((Dpy = XOpenDisplay(DisplayName)) == 0) {
-        cerr << APPNAME << ": could not open display '"
+        cerr << PACKAGE << ": could not open display '"
              << DisplayName << "'" << endl;
         if (!testing) StopServer();
         exit(ERR_EXIT);
@@ -442,7 +442,7 @@ int App::ServerTimeout(int timeout, char* text) {
             break;
         if(timeout) {
             if(i == 0 && text != lasttext)
-                cerr << endl << APPNAME << ": waiting for " << text;
+                cerr << endl << PACKAGE << ": waiting for " << text;
             else
                 cerr << ".";
         }
@@ -529,7 +529,7 @@ int App::StartServer() {
 
 
         execvp(server[0], server);
-        cerr << APPNAME << ": X server could not be started" << endl;
+        cerr << PACKAGE << ": X server could not be started" << endl;
         exit(ERR_EXIT);
         break;
 
@@ -548,7 +548,7 @@ int App::StartServer() {
 
         // Wait for server to start up
         if(WaitForServer() == 0) {
-            cerr << APPNAME << ": unable to connect to X server" << endl;
+            cerr << PACKAGE << ": unable to connect to X server" << endl;
             StopServer();
             ServerPID = -1;
             exit(ERR_EXIT);
@@ -564,7 +564,7 @@ int App::StartServer() {
 
 jmp_buf CloseEnv;
 int IgnoreXIO(Display *d) {
-    cerr << APPNAME << ": connection to X server lost." << endl;
+    cerr << PACKAGE << ": connection to X server lost." << endl;
     longjmp(CloseEnv, 1);
 }
 
@@ -588,7 +588,7 @@ void App::StopServer() {
     // Send HUP to process group
     errno = 0;
     if((killpg(getpid(), SIGHUP) != 0) && (errno != ESRCH))
-        cerr << APPNAME << ": can't send HUP to process group " << getpid() << endl;
+        cerr << PACKAGE << ": can't send HUP to process group " << getpid() << endl;
 
     // Send TERM to server
     if(ServerPID < 0)
@@ -596,7 +596,7 @@ void App::StopServer() {
     errno = 0;
     if(killpg(ServerPID, SIGTERM) < 0) {
         if(errno == EPERM) {
-            cerr << APPNAME << ": can't kill X server" << endl;
+            cerr << PACKAGE << ": can't kill X server" << endl;
             exit(ERR_EXIT);
         }
         if(errno == ESRCH)
@@ -609,7 +609,7 @@ void App::StopServer() {
         return;
     }
 
-    cerr << endl << APPNAME << ":  X server slow to shut down, sending KILL signal." << endl;
+    cerr << endl << PACKAGE << ":  X server slow to shut down, sending KILL signal." << endl;
 
     // Send KILL to server
     errno = 0;
@@ -620,7 +620,7 @@ void App::StopServer() {
 
     // Wait for server to die
     if(ServerTimeout(3, "server to die")) {
-        cerr << endl << APPNAME << ": can't kill server" << endl;
+        cerr << endl << PACKAGE << ": can't kill server" << endl;
         exit(ERR_EXIT);
     }
     cerr << endl;
@@ -666,11 +666,11 @@ void App::GetLock() {
     int fd;
     fd=open(cfg.getOption("lockfile").c_str(),O_WRONLY | O_CREAT | O_EXCL);
     if (fd<0 && errno==EEXIST) {
-        cerr << APPNAME << ": It appears there is another instance of the program already running" <<endl
+        cerr << PACKAGE << ": It appears there is another instance of the program already running" <<endl
             << "If not, try to remove the lockfile: " << cfg.getOption("lockfile") <<endl;
         exit(ERR_EXIT);
     } else if (fd < 0) {
-        cerr << APPNAME << ": Could not accesss lock file: " << cfg.getOption("lockfile") << endl;
+        cerr << PACKAGE << ": Could not accesss lock file: " << cfg.getOption("lockfile") << endl;
         exit(ERR_EXIT);
     }
 }
@@ -684,7 +684,7 @@ void App::RemoveLock() {
 void App::OpenLog() {
     FILE *log = fopen (cfg.getOption("logfile").c_str(),"a");
     if (!log) {
-        cerr <<  APPNAME << ": Could not accesss log file: " << cfg.getOption("logfile") << endl;
+        cerr <<  PACKAGE << ": Could not accesss log file: " << cfg.getOption("logfile") << endl;
         RemoveLock();
         exit(ERR_EXIT);
     }

@@ -1,3 +1,6 @@
+X.Y.Z - under developement
+    * Added FreeBSD compatibility fixes in build process
+    
 1.2.1 - 2005.05.17
     * draw input directly on panel
 

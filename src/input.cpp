@@ -191,12 +191,14 @@ int Input::Correct() {
     if(pw == 0)
         return 0;
 
-    struct spwd *sp = getspnam(pw->pw_name);
+#ifdef SHADOW_PASSWD
+    struct spwd *sp = getspnam(pw->pw_name);    
     endspent();
     if(sp)
-        correct = sp->sp_pwdp;
+	correct = sp->sp_pwdp;
     else
-        correct = pw->pw_passwd;
+#endif
+	correct = pw->pw_passwd;
 
     if(correct == 0 || correct[0] == '\0')
         return 1;

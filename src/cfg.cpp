@@ -21,7 +21,7 @@ Cfg::Cfg() {
     options.insert(option("default_path","./:/bin:/usr/bin:/usr/local/bin:/usr/X11R6/bin"));
     options.insert(option("default_xserver","/usr/X11R6/bin/X"));
     options.insert(option("xserver_arguments",""));
-    options.insert(option("login_cmd","exec /bin/sh -login ~/.xinitrc %session"));
+    options.insert(option("login_cmd","exec /bin/bash -login ~/.xinitrc %session"));
     options.insert(option("halt_cmd","/sbin/shutdown -h now"));
     options.insert(option("reboot_cmd","/sbin/shutdown -r now"));
     options.insert(option("console_cmd","/usr/X11R6/bin/xterm -C -fg white -bg black +sb -g %dx%d+%d+%d -fn %dx%d -T ""Console login"" -e /bin/sh -c ""/bin/cat /etc/issue; exec /bin/login"""));
