@@ -1,3 +1,8 @@
+1.2.2
+-----
+- drawing problem on screens <= 1024x768 (implemented)
+- Don't start X server if theme's not found
+
 1.2.x
 -----
 - i18n
@@ -8,6 +13,7 @@
   or
     current_theme = t1, t2, t3 \
 		    t4, t5
+- FreeBSD fixes
 
 2.0.x
 -----
