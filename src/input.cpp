@@ -191,7 +191,7 @@ int Input::Correct() {
     if(pw == 0)
         return 0;
 
-#ifdef SHADOW_PASSWD
+#ifdef HAVE_SHADOW
     struct spwd *sp = getspnam(pw->pw_name);    
     endspent();
     if(sp)

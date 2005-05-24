@@ -24,8 +24,7 @@
 #include "const.h"
 #include "cfg.h"
 
-#define SHADOW_PASSWD
-#ifdef SHADOW_PASSWD
+#ifdef HAVE_SHADOW
 #include <shadow.h>
 #endif
 
