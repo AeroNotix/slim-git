@@ -25,7 +25,7 @@ input_fgcolor           #000000
 # Username / password request
 username_font          	Verdana:size=14:bold
 username_color        	#f9f9f9
-username_x              280
+username_x              50%
 username_y              183
 password_x              50%
 password_y              183
