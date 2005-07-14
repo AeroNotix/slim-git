@@ -3404,23 +3404,23 @@ fi
   else
      PKG_CONFIG_MIN_VERSION=0.9.0
      if $PKG_CONFIG --atleast-pkgconfig-version $PKG_CONFIG_MIN_VERSION; then
-        echo "$as_me:$LINENO: checking for xft >= 2.0" >&5
-echo $ECHO_N "checking for xft >= 2.0... $ECHO_C" >&6
+        echo "$as_me:$LINENO: checking for xft >= 2.0 libpng >= 1.2.7" >&5
+echo $ECHO_N "checking for xft >= 2.0 libpng >= 1.2.7... $ECHO_C" >&6
 
-        if $PKG_CONFIG --exists "xft >= 2.0" ; then
+        if $PKG_CONFIG --exists "xft >= 2.0 libpng >= 1.2.7" ; then
             echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6
             succeeded=yes
 
             echo "$as_me:$LINENO: checking DEPS_CFLAGS" >&5
 echo $ECHO_N "checking DEPS_CFLAGS... $ECHO_C" >&6
-            DEPS_CFLAGS=`$PKG_CONFIG --cflags "xft >= 2.0"`
+            DEPS_CFLAGS=`$PKG_CONFIG --cflags "xft >= 2.0 libpng >= 1.2.7"`
             echo "$as_me:$LINENO: result: $DEPS_CFLAGS" >&5
 echo "${ECHO_T}$DEPS_CFLAGS" >&6
 
             echo "$as_me:$LINENO: checking DEPS_LIBS" >&5
 echo $ECHO_N "checking DEPS_LIBS... $ECHO_C" >&6
-            DEPS_LIBS=`$PKG_CONFIG --libs "xft >= 2.0"`
+            DEPS_LIBS=`$PKG_CONFIG --libs "xft >= 2.0 libpng >= 1.2.7"`
             echo "$as_me:$LINENO: result: $DEPS_LIBS" >&5
 echo "${ECHO_T}$DEPS_LIBS" >&6
         else
@@ -3428,7 +3428,7 @@ echo "${ECHO_T}$DEPS_LIBS" >&6
             DEPS_LIBS=""
             ## If we have a custom action on failure, don't print errors, but
             ## do set a variable so people can do so.
-            DEPS_PKG_ERRORS=`$PKG_CONFIG --errors-to-stdout --print-errors "xft >= 2.0"`
+            DEPS_PKG_ERRORS=`$PKG_CONFIG --errors-to-stdout --print-errors "xft >= 2.0 libpng >= 1.2.7"`
             echo $DEPS_PKG_ERRORS
         fi
 
@@ -3443,8 +3443,8 @@ echo "${ECHO_T}$DEPS_LIBS" >&6
   if test $succeeded = yes; then
      :
   else
-     { { echo "$as_me:$LINENO: error: Library requirements (xft >= 2.0) not met; consider adjusting the PKG_CONFIG_PATH environment variable if your libraries are in a nonstandard prefix so pkg-config can find them." >&5
-echo "$as_me: error: Library requirements (xft >= 2.0) not met; consider adjusting the PKG_CONFIG_PATH environment variable if your libraries are in a nonstandard prefix so pkg-config can find them." >&2;}
+     { { echo "$as_me:$LINENO: error: Library requirements (xft >= 2.0 libpng >= 1.2.7) not met; consider adjusting the PKG_CONFIG_PATH environment variable if your libraries are in a nonstandard prefix so pkg-config can find them." >&5
+echo "$as_me: error: Library requirements (xft >= 2.0 libpng >= 1.2.7) not met; consider adjusting the PKG_CONFIG_PATH environment variable if your libraries are in a nonstandard prefix so pkg-config can find them." >&2;}
    { (exit 1); exit 1; }; }
   fi
 
@@ -3528,86 +3528,6 @@ fi
 
 if test "x$ac_cv_lib_jpeg_jpeg_read_header" != "xyes" ; then
          echo "ERROR: libjpeg seems to be missing on your system..."
-         echo "  please install first"
-         exit 1
-fi
-
-
-echo "$as_me:$LINENO: checking for png_info_init in -lpng" >&5
-echo $ECHO_N "checking for png_info_init in -lpng... $ECHO_C" >&6
-if test "${ac_cv_lib_png_png_info_init+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lpng  $LIBS"
-cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-
-/* Override any gcc2 internal prototype to avoid an error.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-/* We use char because int might match the return type of a gcc2
-   builtin and then its argument prototype would still apply.  */
-char png_info_init ();
-int
-main ()
-{
-png_info_init ();
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext conftest$ac_exeext
-if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
-  (eval $ac_link) 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } &&
-	 { ac_try='test -z "$ac_c_werror_flag"
-			 || test ! -s conftest.err'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; } &&
-	 { ac_try='test -s conftest$ac_exeext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-  ac_cv_lib_png_png_info_init=yes
-else
-  echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-ac_cv_lib_png_png_info_init=no
-fi
-rm -f conftest.err conftest.$ac_objext \
-      conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-echo "$as_me:$LINENO: result: $ac_cv_lib_png_png_info_init" >&5
-echo "${ECHO_T}$ac_cv_lib_png_png_info_init" >&6
-if test $ac_cv_lib_png_png_info_init = yes; then
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_LIBPNG 1
-_ACEOF
-
-  LIBS="-lpng $LIBS"
-
-fi
-
-if test "x$ac_cv_lib_png_png_info_init" != "xyes" ; then
-         echo "ERROR: libpng seems to be missing on your system..."
          echo "  please install first"
          exit 1
 fi
