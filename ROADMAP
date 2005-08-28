@@ -14,3 +14,10 @@
 - restart X server on ctrl-alt-backspace
 - allow switching theme on the fly if a set is specified in slim.conf
 - text alignment, to allow to center texts of unknown length (e.g. %host)
+
+
+IDEAS
+-----
+- Clock support
+- Session chooser
+- Shutdown / restart / exit Buttons

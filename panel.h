@@ -21,10 +21,9 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <iostream>
-#if defined(HAVE_LIBGEN_H)
-#  if defined(HAVE_BASENAME) || defined(HAVE_DIRNAME)
+
+#ifdef NEEDS_BASENAME
 #include <libgen.h>
-#  endif
 #endif
 
 #include "switchuser.h"
