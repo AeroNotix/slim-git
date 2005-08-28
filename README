@@ -21,7 +21,7 @@ INSTALLATION
     
 USAGE
 
-    To launch slim, execute run the slim binary,
+	To launch slim, execute run the slim binary,
     followed by the -d option if you want it to
     run as a daemon in the background (reccommended)
     
