@@ -24,7 +24,7 @@
 extern App* LoginApp;
 
 void CatchSignal(int sig) {
-    cerr << PACKAGE << ": unexpected signal " << sig << endl;
+    cerr << APPNAME << ": unexpected signal " << sig << endl;
     LoginApp->StopServer();
     LoginApp->RemoveLock();
     exit(ERR_EXIT);
@@ -69,24 +69,24 @@ App::App(int argc, char** argv) {
             daemonmode = true;
             break;
         case 'v':	// Version
-            cout << PACKAGE << " version " << VERSION << endl;
+            std::cout << APPNAME << " version " << VERSION << endl;
             exit(OK_EXIT);
             break;
         case '?':	// Illegal
             cerr << endl;
         case 'h':   // Help
-            cerr << "usage:  " << PACKAGE << " [option ...]" << endl
+            cerr << "usage:  " << APPNAME << " [option ...]" << endl
             << "options:" << endl
-            << "    -d" << endl
-            << "    -v" << endl
-            << "    -p /path/to/theme/dir" << endl;
+            << "    -d: daemon mode" << endl
+            << "    -v: show version" << endl
+            << "    -p /path/to/theme/dir: preview theme" << endl;
             exit(OK_EXIT);
             break;
         }
     }
 
     if (getuid() != 0 && !testing) {
-        cerr << PACKAGE << ": only root can run this program" << endl;
+        cerr << APPNAME << ": only root can run this program" << endl;
         exit(ERR_EXIT);
     }
 
@@ -107,33 +107,43 @@ void App::Run() {
 
     // Read configuration and theme
     cfg.readConf(CFGFILE);
+    string themebase = "";
     string themefile = "";
     string themedir = "";
+    string name = "";
     if (testing) {
-        themedir = themefile + testtheme;
-        themefile = themedir + "/slim.theme";
+        name = testtheme;
     } else {
-        string name = cfg.getOption("current_theme");
-
-        // extract random from theme set
+        themebase = string(THEMESDIR) + "/"; 
+        name = cfg.getOption("current_theme");
         string::size_type pos;
         if ((pos = name.find(",")) != string::npos) {
-            if (name[name.length()-1] == ',') {
-                name = name.substr(0, name.length() - 1);
+            // input is a set
+            name = findValidRandomTheme(name);
+            if (name == "") {
+                name = "default";
             }
-
-            vector<string> themes;
-            Cfg::split(themes, name, ',');
-            srandom(getpid()+time(NULL));
-            int sel = random() % themes.size();
-            name = Cfg::Trim(themes[sel]);
         }
-
-        themedir = themefile + THEMESDIR +"/" + name;
-        themefile = themedir + "/slim.theme";
     }
 
-    cfg.readConf(themefile);
+    bool loaded = false;
+    while (!loaded) {
+        themedir =  themebase + name;
+        themefile = themedir + THEMESFILE;
+        if (!cfg.readConf(themefile)) {
+            if (name == "default") {
+                cerr << APPNAME << ": Failed to open default theme file "
+                     << themefile << endl;
+                exit(ERR_EXIT);
+            } else {
+                cerr << APPNAME << ": Invalid theme in config: "
+                     << name << endl;
+                name = "default";
+            }
+        } else {
+            loaded = true;
+        }
+    }
 
     if (!testing) {
         // Create lock file
@@ -156,7 +166,7 @@ void App::Run() {
         // Daemonize
         if (daemonmode) {
             if (daemon(0, 1) == -1) {
-                cerr << PACKAGE << ": " << strerror(errno) << endl;
+                cerr << APPNAME << ": " << strerror(errno) << endl;
                 exit(ERR_EXIT);
             }
         }
@@ -169,7 +179,7 @@ void App::Run() {
 
     // Open display
     if((Dpy = XOpenDisplay(DisplayName)) == 0) {
-        cerr << PACKAGE << ": could not open display '"
+        cerr << APPNAME << ": could not open display '"
              << DisplayName << "'" << endl;
         if (!testing) StopServer();
         exit(ERR_EXIT);
@@ -179,14 +189,16 @@ void App::Run() {
     Scr = DefaultScreen(Dpy);
     Root = RootWindow(Dpy, Scr);
 
+
     // for tests we use a standard window
     if (testing) {
         Window RealRoot = RootWindow(Dpy, Scr);
         Root = XCreateSimpleWindow(Dpy, RealRoot, 0, 0, 640, 480, 0, 0, 0);
         XMapWindow(Dpy, Root);
         XFlush(Dpy);
+    } else {
+        blankScreen();
     }
-
 
     HideCursor();
 
@@ -239,21 +251,21 @@ void App::Run() {
             LoginPanel->ClosePanel();
 
             switch(Action) {
-            case LOGIN:
-                Login();
-                break;
-            case CONSOLE:
-                Console();
-                break;
-            case REBOOT:
-                Reboot();
-                break;
-            case HALT:
-                Halt();
-                break;
-            case EXIT:
-                Exit();
-                break;
+                case LOGIN:
+                    Login();
+                    break;
+                case CONSOLE:
+                    Console();
+                    break;
+                case REBOOT:
+                    Reboot();
+                    break;
+                case HALT:
+                    Halt();
+                    break;
+                case EXIT:
+                    Exit();
+                    break;
             }
         }
     }
@@ -442,7 +454,7 @@ int App::ServerTimeout(int timeout, char* text) {
             break;
         if(timeout) {
             if(i == 0 && text != lasttext)
-                cerr << endl << PACKAGE << ": waiting for " << text;
+                cerr << endl << APPNAME << ": waiting for " << text;
             else
                 cerr << ".";
         }
@@ -529,7 +541,7 @@ int App::StartServer() {
 
 
         execvp(server[0], server);
-        cerr << PACKAGE << ": X server could not be started" << endl;
+        cerr << APPNAME << ": X server could not be started" << endl;
         exit(ERR_EXIT);
         break;
 
@@ -548,7 +560,7 @@ int App::StartServer() {
 
         // Wait for server to start up
         if(WaitForServer() == 0) {
-            cerr << PACKAGE << ": unable to connect to X server" << endl;
+            cerr << APPNAME << ": unable to connect to X server" << endl;
             StopServer();
             ServerPID = -1;
             exit(ERR_EXIT);
@@ -564,7 +576,7 @@ int App::StartServer() {
 
 jmp_buf CloseEnv;
 int IgnoreXIO(Display *d) {
-    cerr << PACKAGE << ": connection to X server lost." << endl;
+    cerr << APPNAME << ": connection to X server lost." << endl;
     longjmp(CloseEnv, 1);
 }
 
@@ -588,7 +600,7 @@ void App::StopServer() {
     // Send HUP to process group
     errno = 0;
     if((killpg(getpid(), SIGHUP) != 0) && (errno != ESRCH))
-        cerr << PACKAGE << ": can't send HUP to process group " << getpid() << endl;
+        cerr << APPNAME << ": can't send HUP to process group " << getpid() << endl;
 
     // Send TERM to server
     if(ServerPID < 0)
@@ -596,7 +608,7 @@ void App::StopServer() {
     errno = 0;
     if(killpg(ServerPID, SIGTERM) < 0) {
         if(errno == EPERM) {
-            cerr << PACKAGE << ": can't kill X server" << endl;
+            cerr << APPNAME << ": can't kill X server" << endl;
             exit(ERR_EXIT);
         }
         if(errno == ESRCH)
@@ -609,7 +621,7 @@ void App::StopServer() {
         return;
     }
 
-    cerr << endl << PACKAGE << ":  X server slow to shut down, sending KILL signal." << endl;
+    cerr << endl << APPNAME << ":  X server slow to shut down, sending KILL signal." << endl;
 
     // Send KILL to server
     errno = 0;
@@ -620,10 +632,23 @@ void App::StopServer() {
 
     // Wait for server to die
     if(ServerTimeout(3, "server to die")) {
-        cerr << endl << PACKAGE << ": can't kill server" << endl;
+        cerr << endl << APPNAME << ": can't kill server" << endl;
         exit(ERR_EXIT);
     }
     cerr << endl;
+}
+
+
+void App::blankScreen()
+{
+    GC gc = XCreateGC(Dpy, Root, 0, 0);
+    XSetForeground(Dpy, gc, BlackPixel(Dpy, Scr));
+    XFillRectangle(Dpy, Root, gc, 0, 0,
+                   XWidthOfScreen(ScreenOfDisplay(Dpy, Scr)),
+                   XHeightOfScreen(ScreenOfDisplay(Dpy, Scr)));
+    XFlush(Dpy);
+    XFreeGC(Dpy, gc);
+
 }
 
 void App::setBackground(const string& themedir) {
@@ -666,11 +691,11 @@ void App::GetLock() {
     int fd;
     fd=open(cfg.getOption("lockfile").c_str(),O_WRONLY | O_CREAT | O_EXCL);
     if (fd<0 && errno==EEXIST) {
-        cerr << PACKAGE << ": It appears there is another instance of the program already running" <<endl
+        cerr << APPNAME << ": It appears there is another instance of the program already running" <<endl
             << "If not, try to remove the lockfile: " << cfg.getOption("lockfile") <<endl;
         exit(ERR_EXIT);
     } else if (fd < 0) {
-        cerr << PACKAGE << ": Could not accesss lock file: " << cfg.getOption("lockfile") << endl;
+        cerr << APPNAME << ": Could not accesss lock file: " << cfg.getOption("lockfile") << endl;
         exit(ERR_EXIT);
     }
 }
@@ -684,7 +709,7 @@ void App::RemoveLock() {
 void App::OpenLog() {
     FILE *log = fopen (cfg.getOption("logfile").c_str(),"a");
     if (!log) {
-        cerr <<  PACKAGE << ": Could not accesss log file: " << cfg.getOption("logfile") << endl;
+        cerr <<  APPNAME << ": Could not accesss log file: " << cfg.getOption("logfile") << endl;
         RemoveLock();
         exit(ERR_EXIT);
     }
@@ -700,4 +725,34 @@ void App::OpenLog() {
 void App::CloseLog(){
     fclose(stderr);
     fclose(stdout);
+}
+
+string App::findValidRandomTheme(const string& set)
+{
+    // extract random theme from theme set; return empty string on error
+    string name = set;
+    struct stat buf;
+
+    if (name[name.length()-1] == ',') {
+        name = name.substr(0, name.length() - 1);
+    }
+
+    srandom(getpid()+time(NULL));
+
+    vector<string> themes;
+    string themefile;
+    Cfg::split(themes, name, ',');
+    do {
+        int sel = random() % themes.size();
+
+        name = Cfg::Trim(themes[sel]);
+        themefile = string(THEMESDIR) +"/" + name + THEMESFILE;
+        if (stat(themefile.c_str(), &buf) != 0) {
+            themes.erase(find(themes.begin(), themes.end(), name));
+            cerr << APPNAME << ": Invalid theme in config: "
+                 << name << endl;
+            name = "";
+        }
+    } while (name == "" && themes.size());
+    return name;
 }

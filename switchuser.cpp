@@ -56,7 +56,7 @@ void SwitchUser::SetUserId() {
             (initgroups(Pw->pw_name, Pw->pw_gid) != 0) ||
             (setgid(Pw->pw_gid) != 0) ||
             (setuid(Pw->pw_uid) != 0) ) {
-        cerr << PACKAGE << ": could not switch user id" << endl;
+        cerr << APPNAME << ": could not switch user id" << endl;
         exit(ERR_EXIT);
     }
 }
@@ -75,7 +75,7 @@ void SwitchUser::Execute(const char* cmd) {
     args[3] = 0;
 
     execv(shell, args);
-    cerr << PACKAGE << ": could not execute login command" << endl;
+    cerr << APPNAME << ": could not execute login command" << endl;
 }
 
 

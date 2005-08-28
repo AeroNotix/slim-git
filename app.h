@@ -48,6 +48,8 @@ private:
     void OpenLog();
     void CloseLog();
     void HideCursor();
+    
+    static std::string findValidRandomTheme(const std::string& set);
 
     // Server functions
     int StartServer();
@@ -70,6 +72,7 @@ private:
     XpmAttributes BackgroundPixmapAttributes;
     Pixmap BackgroundPixmap;
 
+    void App::blankScreen();
     void setBackground(const string& themedir);
 	
     bool daemonmode;

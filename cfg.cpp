@@ -97,7 +97,7 @@ Cfg::Cfg() {
  * Creates the Cfg object and parses
  * known options from the given configfile / themefile
  */
-void Cfg::readConf(string configfile) {
+bool Cfg::readConf(string configfile) {
     int n = -1;
     string line, fn(configfile);
     map<string,string>::iterator it;
@@ -115,8 +115,10 @@ void Cfg::readConf(string configfile) {
             }
         }
         cfgfile.close();
+        return true;
     } else {
         error = "Cannot read configuration file: " + configfile;
+        return false;
     }
 }
 
@@ -210,7 +212,8 @@ int Cfg::absolutepos(const string& position, int max, int width) {
     n = position.find("%");
     if (n>0) { // X Position expressed in percentage
         const char* tmp =  position.substr(0, n).c_str();
-        return (max*string2int(tmp)/100) - (width / 2);
+        int result = (max*string2int(tmp)/100) - (width / 2);
+        return result < 0 ? 0 : result ;
     } else { // Absolute X position
         return string2int(position.c_str());
     }

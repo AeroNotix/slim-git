@@ -17,7 +17,6 @@
 #include <X11/cursorfont.h>
 #include <X11/Xmu/WinUtil.h>
 #include <sys/wait.h>
-#include <getopt.h>
 #include <stdlib.h>
 #include <signal.h>
 #include <iostream>
