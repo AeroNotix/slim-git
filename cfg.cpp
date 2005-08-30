@@ -10,8 +10,11 @@
 
 #include <fstream>
 #include <string>
-#include "cfg.h"
 #include <iostream>
+#include <unistd.h>
+
+#include "cfg.h"
+
 using namespace std;
 
 typedef pair<string,string> option;
