@@ -1,13 +1,13 @@
-# Makefile for slim - NetBSD
+# Makefile for slim - OpenBSD
 #
 # Edit the following section to adjust the options
 # to fit into your operating system / distribution
 #######################################################
 CXX=/usr/bin/g++
 CC=/usr/bin/gcc
-CFLAGS=-I. -I/usr/X11R6/include -I/usr/X11R6/include/freetype2 -I/usr/X11R6/include/freetype2/config -I/usr/pkg/include -I/usr/include
+CFLAGS=-I. -I/usr/X11R6/include -I/usr/X11R6/include/freetype2 -I/usr/X11R6/include/freetype2/config -I/usr/local/include/libpng -I/usr/local/include -I/usr/include
 CXXLAGS=$(CFLAGS)
-LDFLAGS=-L/usr/X11R6/lib -L/usr/pkg/lib -lXft -lX11 -lfreetype -lXrender -lfontconfig -lpng -lz -lm -lcrypt -lXpm -lXmu -lpng -ljpeg
+LDFLAGS=-L/usr/X11R6/lib -L/usr/local/lib -lXft -lX11 -lfreetype -lXrender -lfontconfig -lpng -lz -lm -lXpm -lXmu -lpng -ljpeg
 CUSTOM=-DNEEDS_BASENAME
 PREFIX=/usr
 CFGDIR=/etc
@@ -23,13 +23,33 @@ DEFINES=-DPACKAGE=\"$(NAME)\" -DVERSION=\"$(VERSION)\" \
 
 OBJECTS=jpeg.o png.o main.o image.o cfg.o switchuser.o input.o app.o panel.o
 
+.SUFFIXES: .c.o .cpp.o
+
 all: slim
 
 slim: $(OBJECTS) 
 	$(CXX) $(LDFLAGS) $(OBJECTS) -o $(NAME)
 
-.cpp.o:
-	$(CXX) $(CFLAGS) $(DEFINES) $(CUSTOM) -c $< -o $@
+main.o:
+	$(CXX) $(CFLAGS) $(DEFINES) $(CUSTOM) -c main.cpp -o $@
+
+image.o:
+	$(CXX) $(CFLAGS) $(DEFINES) $(CUSTOM) -c image.cpp -o $@
+
+cfg.o:
+	$(CXX) $(CFLAGS) $(DEFINES) $(CUSTOM) -c cfg.cpp -o $@
+
+switchuser.o:
+	$(CXX) $(CFLAGS) $(DEFINES) $(CUSTOM) -c switchuser.cpp -o $@
+
+input.o:
+	$(CXX) $(CFLAGS) $(DEFINES) $(CUSTOM) -c input.cpp -o $@
+
+app.o:
+	$(CXX) $(CFLAGS) $(DEFINES) $(CUSTOM) -c app.cpp -o $@
+
+panel.o:
+	$(CXX) $(CFLAGS) $(DEFINES) $(CUSTOM) -c panel.cpp -o $@
 
 .c.o:
 	$(CC) $(CFLAGS) $(DEFINES) $(CUSTOM) -c $< -o $@
