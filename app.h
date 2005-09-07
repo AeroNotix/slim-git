@@ -41,6 +41,7 @@ private:
     void Login();
     void Reboot();
     void Halt();
+    void Suspend();
     void Console();
     void Exit();
     void KillAllClients(Bool top);

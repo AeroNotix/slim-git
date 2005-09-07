@@ -58,7 +58,7 @@ char Input::Key(char ascii, KeySym keysym, bool singleInputMode) {
                 Action = special;
         } else {
             // Check for special command (halt, reboot)
-            if(special == REBOOT || special == HALT)
+            if(special == REBOOT || special == HALT || special == SUSPEND)
                 Action = SpecialCorrect(special);
 
             // Regular login
@@ -219,6 +219,8 @@ int Input::SpecialWanted() {
         result = HALT;
     else if(!strcmp(NameBuffer, REBOOT_STR))
         result = REBOOT;
+    else if(!strcmp(NameBuffer, SUSPEND_STR))
+        result = SUSPEND;
     else if(!strcmp(NameBuffer, EXIT_STR))
         result = EXIT;
     else

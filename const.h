@@ -21,6 +21,7 @@
 #define HALT_STR        "halt"
 #define REBOOT_STR      "reboot"
 #define EXIT_STR        "exit"
+#define SUSPEND_STR     "suspend"
 
 #define HIDE		0
 #define SHOW		1
@@ -32,6 +33,7 @@
 #define REBOOT		4
 #define HALT		5
 #define EXIT		6
+#define SUSPEND		7
 
 #define GET_NAME    0
 #define GET_PASSWD	1

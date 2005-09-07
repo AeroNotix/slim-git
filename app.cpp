@@ -265,6 +265,9 @@ void App::Run() {
                 case HALT:
                     Halt();
                     break;
+                case SUSPEND:
+                    Suspend();
+                    break;
                 case EXIT:
                     Exit();
                     break;
@@ -374,6 +377,11 @@ void App::Halt() {
     RemoveLock();
     system(cfg.getOption("halt_cmd").c_str());
     exit(OK_EXIT);
+}
+
+void App::Suspend() {
+    sleep(1);
+    system(cfg.getOption("suspend_cmd").c_str());
 }
 
 
