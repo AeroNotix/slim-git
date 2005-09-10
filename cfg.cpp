@@ -187,20 +187,6 @@ string Cfg::getWelcomeMessage(){
     return s;
 }
 
-/* Return the login command with replaced session */
-string Cfg::getLoginCommand(const string& session){
-    string s = getOption("login_cmd");
-    int n = -1;
-    n = s.find("%session");
-    if (n >= 0) {
-        string tmp = s.substr(0, n);
-        tmp = tmp + session;
-        tmp = tmp + s.substr(n+8, s.size() - n);
-        s = tmp;
-    }
-    return s;
-}
-
 int Cfg::string2int(const char* string, bool* ok) {
     char* err = 0;
     int l = (int)strtol(string, &err, 10);

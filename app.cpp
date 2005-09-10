@@ -112,35 +112,35 @@ void App::Run() {
     string themebase = "";
     string themefile = "";
     string themedir = "";
-    string name = "";
+    themeName = "";
     if (testing) {
-        name = testtheme;
+        themeName = testtheme;
     } else {
-        themebase = string(THEMESDIR) + "/"; 
-        name = cfg.getOption("current_theme");
+        themebase = string(THEMESDIR) + "/";
+        themeName = cfg.getOption("current_theme");
         string::size_type pos;
-        if ((pos = name.find(",")) != string::npos) {
+        if ((pos = themeName.find(",")) != string::npos) {
             // input is a set
-            name = findValidRandomTheme(name);
-            if (name == "") {
-                name = "default";
+            themeName = findValidRandomTheme(themeName);
+            if (themeName == "") {
+                themeName = "default";
             }
         }
     }
 
     bool loaded = false;
     while (!loaded) {
-        themedir =  themebase + name;
+        themedir =  themebase + themeName;
         themefile = themedir + THEMESFILE;
         if (!cfg.readConf(themefile)) {
-            if (name == "default") {
+            if (themeName == "default") {
                 cerr << APPNAME << ": Failed to open default theme file "
                      << themefile << endl;
                 exit(ERR_EXIT);
             } else {
                 cerr << APPNAME << ": Invalid theme in config: "
-                     << name << endl;
-                name = "default";
+                     << themeName << endl;
+                themeName = "default";
             }
         } else {
             loaded = true;
@@ -310,7 +310,10 @@ void App::Login() {
         // Login process starts here
         SwitchUser Su(pw, &cfg, DisplayName);
         string session = LoginPanel->getSession();
-        Su.Login(cfg.getLoginCommand(session).c_str());
+	string loginCommand = cfg.getOption("login_cmd");
+        replaceVariables(loginCommand, SESSION_VAR, session);
+        replaceVariables(loginCommand, THEME_VAR, themeName);
+        Su.Login(loginCommand.c_str());
         exit(OK_EXIT);
     }
 
@@ -765,4 +768,16 @@ string App::findValidRandomTheme(const string& set)
         }
     } while (name == "" && themes.size());
     return name;
+}
+
+
+void App::replaceVariables(string& input,
+			   const string& var,
+			   const string& value)
+{
+    string::size_type pos = 0;
+    int len = var.size();
+    while ((pos = input.find(var, pos)) != string::npos) {
+        input = input.substr(0, pos) + value + input.substr(pos+len);
+    }
 }
