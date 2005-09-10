@@ -1,7 +1,9 @@
 1.2.3 - under developement
     * Added FreeBSD, NetBSD 5, OpenBSD support
-	* Replaced autotools with plain makefile(s)
-	* Added 'suspend' command (untested, we don't use it)
+    * Replaced autotools with plain makefile(s)
+    * Added 'suspend' command (untested, we don't use it)
+    * add %theme variable in login_cmd
+    
 
 1.2.2 - 2005.05.21
     * fix panel drawing on screens <= 1024x768
