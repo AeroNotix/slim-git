@@ -19,6 +19,7 @@
 
 #include <sstream>
 #include <vector>
+#include <algorithm>
 #include "app.h"
 #include "image.h"
 
