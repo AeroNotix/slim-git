@@ -1,4 +1,4 @@
-# Makefile for slim - FreeBSD 5
+# Makefile for slim - FreeBSD 4 and 5
 #
 # Edit the following section to adjust the options
 # to fit into your operating system / distribution

@@ -234,9 +234,9 @@ string Cfg::nextSession(string current) {
         return current;
 
     for (int i=0; i<sessions.size()-1; i++) {
-        if (current == sessions.at(i)) {
-            return sessions.at(i+1);
+        if (current == sessions[i]) {
+            return sessions[i+1];
         }
     }
-    return sessions.at(0);
+    return sessions[0];
 }
