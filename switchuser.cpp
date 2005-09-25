@@ -35,6 +35,7 @@ void SwitchUser::Login(const char* cmd) {
 
 void SwitchUser::SetEnvironment() {
     char *term = getenv("TERM");
+    char** environ;
     environ = (char **) new char*[2];
     environ[0] = 0;
     if(term)

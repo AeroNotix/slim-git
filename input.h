@@ -20,12 +20,13 @@
 #include <string>
 #include <ctype.h>
 #include <iostream>
-#include <shadow.h>
 
 #include "const.h"
 #include "cfg.h"
 
-#define SHADOW_PASSWD
+#ifdef HAVE_SHADOW
+#include <shadow.h>
+#endif
 
 class Input {
 public:

@@ -17,10 +17,14 @@
 #include <X11/cursorfont.h>
 #include <X11/Xmu/WinUtil.h>
 #include <sys/wait.h>
-#include <getopt.h>
 #include <stdlib.h>
 #include <signal.h>
 #include <iostream>
+
+#ifdef NEEDS_BASENAME
+#include <libgen.h>
+#endif
+
 #include "switchuser.h"
 #include "input.h"
 #include "const.h"

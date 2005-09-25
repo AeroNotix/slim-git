@@ -6,16 +6,16 @@ INSTALL file for SLiM
  - libjpeg
 
 1. to build and install the program:
-./configure
-make
-make install (as root)
+ - edit the Makefile to adjust libraries and paths to your OS.
+ - make
+ - make install
+ 
+Pre-configured makefiles for some platform are available,
+i.e. for FreeBSD use:
+	- make -f Makefile.freebsd
+	- make -f Makefile.freebsd install
 
-2. configuration files
-If no additional options are specified at step 1,
-themes are installed into /usr/share/slim/themes
-the general config file is /usr/etc/slim.conf
-
-3. automatic startup
+2. automatic startup
 Edit the init scripts according to your OS/Distribution.
 
 

@@ -33,7 +33,6 @@ public:
     const string& getError() const;
     string& getOption(string option);
     string getWelcomeMessage();
-    string getLoginCommand(const string& session);
 
     static int absolutepos(const string& position, int max, int width);
     static int string2int(const char* string, bool* ok = 0);

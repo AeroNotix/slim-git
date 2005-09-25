@@ -58,7 +58,7 @@ char Input::Key(char ascii, KeySym keysym, bool singleInputMode) {
                 Action = special;
         } else {
             // Check for special command (halt, reboot)
-            if(special == REBOOT || special == HALT)
+            if(special == REBOOT || special == HALT || special == SUSPEND)
                 Action = SpecialCorrect(special);
 
             // Regular login
@@ -191,12 +191,14 @@ int Input::Correct() {
     if(pw == 0)
         return 0;
 
-    struct spwd *sp = getspnam(pw->pw_name);
+#ifdef HAVE_SHADOW
+    struct spwd *sp = getspnam(pw->pw_name);    
     endspent();
     if(sp)
-        correct = sp->sp_pwdp;
+	correct = sp->sp_pwdp;
     else
-        correct = pw->pw_passwd;
+#endif
+	correct = pw->pw_passwd;
 
     if(correct == 0 || correct[0] == '\0')
         return 1;
@@ -217,6 +219,8 @@ int Input::SpecialWanted() {
         result = HALT;
     else if(!strcmp(NameBuffer, REBOOT_STR))
         result = REBOOT;
+    else if(!strcmp(NameBuffer, SUSPEND_STR))
+        result = SUSPEND;
     else if(!strcmp(NameBuffer, EXIT_STR))
         result = EXIT;
     else

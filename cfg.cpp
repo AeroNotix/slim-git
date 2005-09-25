@@ -10,8 +10,11 @@
 
 #include <fstream>
 #include <string>
-#include "cfg.h"
 #include <iostream>
+#include <unistd.h>
+
+#include "cfg.h"
+
 using namespace std;
 
 typedef pair<string,string> option;
@@ -21,9 +24,10 @@ Cfg::Cfg() {
     options.insert(option("default_path","./:/bin:/usr/bin:/usr/local/bin:/usr/X11R6/bin"));
     options.insert(option("default_xserver","/usr/X11R6/bin/X"));
     options.insert(option("xserver_arguments",""));
-    options.insert(option("login_cmd","exec /bin/sh -login ~/.xinitrc %session"));
+    options.insert(option("login_cmd","exec /bin/bash -login ~/.xinitrc %session"));
     options.insert(option("halt_cmd","/sbin/shutdown -h now"));
     options.insert(option("reboot_cmd","/sbin/shutdown -r now"));
+    options.insert(option("suspend_cmd",""));
     options.insert(option("console_cmd","/usr/X11R6/bin/xterm -C -fg white -bg black +sb -g %dx%d+%d+%d -fn %dx%d -T ""Console login"" -e /bin/sh -c ""/bin/cat /etc/issue; exec /bin/login"""));
     options.insert(option("screenshot_cmd","import -window root /login.app.png"));
     options.insert(option("welcome_msg","Welcome to %host"));
@@ -183,20 +187,6 @@ string Cfg::getWelcomeMessage(){
     return s;
 }
 
-/* Return the login command with replaced session */
-string Cfg::getLoginCommand(const string& session){
-    string s = getOption("login_cmd");
-    int n = -1;
-    n = s.find("%session");
-    if (n >= 0) {
-        string tmp = s.substr(0, n);
-        tmp = tmp + session;
-        tmp = tmp + s.substr(n+8, s.size() - n);
-        s = tmp;
-    }
-    return s;
-}
-
 int Cfg::string2int(const char* string, bool* ok) {
     char* err = 0;
     int l = (int)strtol(string, &err, 10);
@@ -244,9 +234,9 @@ string Cfg::nextSession(string current) {
         return current;
 
     for (int i=0; i<sessions.size()-1; i++) {
-        if (current == sessions.at(i)) {
-            return sessions.at(i+1);
+        if (current == sessions[i]) {
+            return sessions[i+1];
         }
     }
-    return sessions.at(0);
+    return sessions[0];
 }

@@ -41,6 +41,7 @@ private:
     void Login();
     void Reboot();
     void Halt();
+    void Suspend();
     void Console();
     void Exit();
     void KillAllClients(Bool top);
@@ -48,8 +49,11 @@ private:
     void OpenLog();
     void CloseLog();
     void HideCursor();
-    
+
     static std::string findValidRandomTheme(const std::string& set);
+    static void App::replaceVariables(std::string& input,
+				      const std::string& var,
+				      const std::string& value);
 
     // Server functions
     int StartServer();
@@ -79,6 +83,8 @@ private:
 	// For testing themes
 	char* testtheme;
     bool testing;
+    
+    std::string themeName;
 
 };
 

@@ -1,10 +1,16 @@
+1.2.3 - 2005.09.11
+    * Added FreeBSD, NetBSD, OpenBSD support
+    * Replaced autotools with plain makefile(s)
+    * Added 'suspend' command (untested, we don't use it)
+    * add %theme variable in login_cmd
+    * Added support for %theme variable in login command
+	
 1.2.2 - 2005.05.21
     * fix panel drawing on screens <= 1024x768
     * Don't start X server unless valid theme found
     * revert to 'default' of invalid theme specified
     * try all themes from a set if one doesn't work
-
-
+    
 1.2.1 - 2005.05.17
     * draw input directly on panel
 
