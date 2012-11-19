@@ -1,13 +1,13 @@
 1.3.4 - 2012.06.26
-	* Replaced stderr writes function.
-	* Fix numlock control.
-	* Fix build with GLUT.
-	* Fix PAM authentication.
+    * Replaced stderr writes function.
+    * Fix numlock control.
+    * Fix build with GLUT.
+    * Fix PAM authentication.
 
 1.3.3 - 2012.02.22
-	* Change build system to CMake.
-	* Add support ConsoleKit.
-	* Fix some bugs....
+    * Change build system to CMake.
+    * Add support ConsoleKit.
+    * Fix some bugs.
 
 1.3.2 - 2010.07.08
     * Add support xauth secret.
@@ -64,13 +64,13 @@
     * Replaced autotools with plain makefile(s)
     * Added 'suspend' command (untested, we don't use it)
     * Added support for %theme variable in login command
-	
+
 1.2.2 - 2005.05.21
     * fix panel drawing on screens <= 1024x768
     * Don't start X server unless valid theme found
     * revert to 'default' of invalid theme specified
     * try all themes from a set if one doesn't work
-    
+
 1.2.1 - 2005.05.17
     * draw input directly on panel
 
@@ -96,8 +96,8 @@
     * added configurable shutdown and reboot messages
     * separated 'Enter username' and 'Enter password' messages
       position.
-    * due to the previous two points, the theme format has 
+    * due to the previous two points, the theme format has
       slightly changed
-    
+
 1.0.0 - 2004.12.07
     * First public SLiM release
