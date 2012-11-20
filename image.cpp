@@ -781,14 +781,13 @@ Image::readPng(const char *filename, int *width, int *height,
                                 (png_infopp) NULL);
     }
 
-    /***** I believe this is because SLiM was written intending to
-           be used with a certain version of libpng but I do not know
-           which one. Therefore, remove it for now and we'll find out
-           later.
+#if PNG_LIBPNG_VER_MAJOR >= 1 && PNG_LIBPNG_VER_MINOR >= 4
+    if (setjmp(png_jmpbuf((png_ptr)))) {
+#else
     if (setjmp(png_ptr->jmpbuf)) {
+#endif
         goto png_destroy;
     }
-    */
 
     png_init_io(png_ptr, infile);
     png_read_info(png_ptr, info_ptr);
