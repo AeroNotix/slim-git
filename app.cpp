@@ -168,7 +168,7 @@ App::App(int argc, char** argv)
             break;
         case '?':    // Illegal
             logStream << endl;
-        case 'h':   // Help
+        case 'h':    // Help
             logStream << "usage:  " << APPNAME << " [option ...]" << endl
             << "options:" << endl
             << "    -d: daemon mode" << endl
