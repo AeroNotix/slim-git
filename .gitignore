@@ -1,0 +1,11 @@
+CMakeCache.txt
+CMakeFiles/
+Makefile
+cmake_install.cmake
+slim
+themes/CMakeFiles/
+themes/Makefile
+themes/cmake_install.cmake
+themes/default/CMakeFiles/
+themes/default/Makefile
+themes/default/cmake_install.cmake
