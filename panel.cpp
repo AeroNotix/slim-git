@@ -16,7 +16,11 @@
 using namespace std;
 
 Panel::Panel(Display* dpy, int scr, Window root, Cfg* config, const string& themedir)
-    : Dpy(dpy), Scr(scr), Root(root), cfg(config), session("")
+    : Dpy(dpy), Scr(scr), Root(root), cfg(config), session(""),
+      // Load properties from config / theme
+      input_name(cfg->getIntOption("input_name_x"), cfg->getIntOption("input_name_y")),
+      input_pass(cfg->getIntOption("input_pass_x"), cfg->getIntOption("input_pass_y")),
+      inputShadowOffset(cfg->getIntOption("input_shadow_xoffset"), cfg->getIntOption("input_shadow_yoffset"))
 {
 
     // Init GC
@@ -49,14 +53,6 @@ Panel::Panel(Display* dpy, int scr, Window root, Cfg* config, const string& them
                       cfg->getOption("session_color").c_str(), &sessioncolor);
     XftColorAllocName(Dpy, DefaultVisual(Dpy, Scr), colormap,
                       cfg->getOption("session_shadow_color").c_str(), &sessionshadowcolor);
-
-    // Load properties from config / theme
-    input_name.x = cfg->getIntOption("input_name_x");
-    input_name.y = cfg->getIntOption("input_name_y");
-    input_pass.x = cfg->getIntOption("input_pass_x");
-    input_pass.y = cfg->getIntOption("input_pass_y");
-    inputShadowOffset.x = cfg->getIntOption("input_shadow_xoffset");
-    inputShadowOffset.y = cfg->getIntOption("input_shadow_yoffset");
 
     if (input_pass.x < 0 || input_pass.y < 0){ // single inputbox mode
         input_pass.x = input_name.x;
