@@ -105,7 +105,7 @@ int conv(int num_msg, const struct pam_message **msg,
 extern App* LoginApp;
 
 int xioerror(Display *disp) {
-	LoginApp->RestartServer();
+    LoginApp->RestartServer();
     return 0;
 }
 
@@ -179,7 +179,7 @@ App::App(int argc, char** argv)
             break;
         }
     }
-#ifndef XNEST_DEBUG 
+#ifndef XNEST_DEBUG
     if (getuid() != 0 && !testing) {
         logStream << APPNAME << ": only root can run this program" << endl;
         exit(ERR_EXIT);
@@ -321,12 +321,12 @@ void App::Run() {
     bool firstloop = true; // 1st time panel is shown (for automatic username)
     bool focuspass = cfg->getOption("focus_password")=="yes";
     bool autologin = cfg->getOption("auto_login")=="yes";
-    
+
     if (firstlogin && cfg->getOption("default_user") != "") {
         LoginPanel->SetName(cfg->getOption("default_user") );
         #ifdef USE_PAM
-	pam.set_item(PAM::Authenticator::User, cfg->getOption("default_user").c_str());
-	#endif
+    pam.set_item(PAM::Authenticator::User, cfg->getOption("default_user").c_str());
+    #endif
         firstlogin = false;
         if (autologin) {
             Login();
@@ -340,7 +340,7 @@ void App::Run() {
     } else if (numlock == "off") {
         NumLock::setOff(Dpy);
     }
-    
+
     // Start looping
     int panelclosed = 1;
     Panel::ActionType Action;
@@ -361,8 +361,8 @@ void App::Run() {
         }
 
         LoginPanel->Reset();
-	
-	
+
+
         if (firstloop && cfg->getOption("default_user") != "") {
             LoginPanel->SetName(cfg->getOption("default_user") );
         }
@@ -375,8 +375,8 @@ void App::Run() {
             XBell(Dpy, 100);
             continue;
         }
-	
-	firstloop = false;
+
+        firstloop = false;
 
         Action = LoginPanel->getAction();
         // for themes test we just quit
@@ -414,7 +414,7 @@ bool App::AuthenticateUser(bool focuspass){
     // Reset the username
     try{
         if (!focuspass)
-		    pam.set_item(PAM::Authenticator::User, 0);
+            pam.set_item(PAM::Authenticator::User, 0);
         pam.authenticate();
     }
     catch(PAM::Auth_Exception& e){
@@ -448,7 +448,7 @@ bool App::AuthenticateUser(bool focuspass){
         }
     }
     LoginPanel->EventHandler(Panel::Get_Passwd);
-    
+
     char *encrypted, *correct;
     struct passwd *pw;
 
@@ -469,7 +469,7 @@ bool App::AuthenticateUser(bool focuspass){
         return false;
 
 #ifdef HAVE_SHADOW
-    struct spwd *sp = getspnam(pw->pw_name);    
+    struct spwd *sp = getspnam(pw->pw_name);
     endspent();
     if(sp)
         correct = sp->sp_pwdp;
@@ -544,7 +544,7 @@ void App::Login() {
     maildir.append(pw->pw_name);
     string xauthority = pw->pw_dir;
     xauthority.append("/.Xauthority");
-    
+
 #ifdef USE_PAM
     // Setup the PAM environment
     try{
@@ -650,8 +650,8 @@ void App::Login() {
     int status;
     while (wpid != pid) {
         wpid = wait(&status);
-		if (wpid == ServerPID)
-			xioerror(Dpy);	// Server died, simulate IO error
+        if (wpid == ServerPID)
+            xioerror(Dpy);	// Server died, simulate IO error
     }
     if (WIFEXITED(status) && WEXITSTATUS(status)) {
         LoginPanel->Message("Failed to execute login command");
@@ -811,11 +811,11 @@ void App::RestartServer() {
     };
 #endif
 
-    StopServer(); 
+    StopServer();
     RemoveLock();
-	while (waitpid(-1, NULL, WNOHANG) > 0); // Collects all dead childrens
+    while (waitpid(-1, NULL, WNOHANG) > 0); // Collects all dead childrens
     Run();
-} 
+}
 
 void App::KillAllClients(Bool top) {
     Window dummywindow;
@@ -1093,7 +1093,7 @@ void App::setBackground(const string& themedir) {
         XSetWindowBackgroundPixmap(Dpy, Root, p);
     }
     XClearWindow(Dpy, Root);
-    
+
     XFlush(Dpy);
     delete image;
 }
@@ -1162,8 +1162,8 @@ void App::OpenLog() {
 
 // Relases stdout/err
 void App::CloseLog(){
-	// Simply closing the log
-	logStream.closeLog();
+    // Simply closing the log
+    logStream.closeLog();
 }
 
 string App::findValidRandomTheme(const string& set)
