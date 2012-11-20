@@ -111,7 +111,6 @@ Cfg::Cfg()
     options.insert(option("msg_shadow_yoffset", "0"));
     options.insert(option("msg_shadow_color","#FFFFFF"));
     
-
     options.insert(option("session_color","#FFFFFF"));
     options.insert(option("session_font","Verdana:size=16:bold"));
     options.insert(option("session_x","50%"));
