@@ -21,8 +21,7 @@ Panel::Panel(Display* dpy, int scr, Window root, Cfg* config, const string& them
 
     // Init GC
     XGCValues gcv;
-    unsigned long gcm;
-    gcm = GCForeground|GCBackground|GCGraphicsExposures;
+    unsigned long gcm = GCForeground | GCBackground | GCGraphicsExposures;
     gcv.foreground = GetColor("black");
     gcv.background = GetColor("white");
     gcv.graphics_exposures = False;
