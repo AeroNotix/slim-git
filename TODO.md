@@ -1,7 +1,7 @@
 Future
 ------
 
-* Modernize code
+* Modernize code.
 * Integrate with systemd/logind.
 * Address i18n issues on the bugtracker.
 
