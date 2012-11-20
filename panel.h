@@ -30,6 +30,7 @@
 #include "switchuser.h"
 #include "log.h"
 #include "image.h"
+#include "coord.h"
 
 class Panel {
 public:
@@ -115,27 +116,16 @@ private:
     std::string HiddenPasswdBuffer;
 
     // Configuration
-    int input_name_x;
-    int input_name_y;
-    int input_pass_x;
-    int input_pass_y;
-    int inputShadowXOffset;
-    int inputShadowYOffset;
-    int input_cursor_height;
-    int welcome_x;
-    int welcome_y;
-    int welcome_shadow_xoffset;
-    int welcome_shadow_yoffset;
-    int session_shadow_xoffset;
-    int session_shadow_yoffset;
-    int intro_x;
-    int intro_y;
-    int username_x;
-    int username_y;
-    int username_shadow_xoffset;
-    int username_shadow_yoffset;
-    int password_x;
-    int password_y;
+    Coord input_name;
+    Coord input_pass;
+    Coord inputShadowOffset;
+    Coord welcome;
+    Coord welcome_shadow_offset;
+    Coord session_shadow_offset;
+    Coord intro;
+    Coord username;
+    Coord username_shadow_offset;
+    Coord password;
     std::string welcome_message;
     std::string intro_message;
 

@@ -58,6 +58,7 @@ set(slim_srcs
 	log.cpp
 	png.c
 	jpeg.c
+    coord.cpp
 )
 
 if(USE_PAM)
