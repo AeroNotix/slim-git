@@ -780,8 +780,8 @@ void App::Exit() {
 #endif
 
     if (testing) {
-        const char* testmsg = "This is a test message :-)";
-        LoginPanel->Message(testmsg);
+        const char* testmsg= "¥·£·€·$·¢·₡·₢·₣·₤·₥·₦·₧·₨·₩·₪·₫·₭·₮·₯·₹";
+		LoginPanel->Message(testmsg);
         sleep(3);
         delete LoginPanel;
         XCloseDisplay(Dpy);

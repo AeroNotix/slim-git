@@ -189,7 +189,7 @@ void Panel::Message(const string& text) {
     XGlyphInfo extents;
     XftDraw *draw = XftDrawCreate(Dpy, Root,
                                   DefaultVisual(Dpy, Scr), DefaultColormap(Dpy, Scr));
-    XftTextExtents8(Dpy, msgfont, reinterpret_cast<const XftChar8*>(text.c_str()),
+    XftTextExtentsUtf8(Dpy, msgfont, reinterpret_cast<const XftChar8*>(text.c_str()),
                     text.length(), &extents);
     cfgX = cfg->getOption("msg_x");
     cfgY = cfg->getOption("msg_y");
@@ -593,10 +593,10 @@ void Panel::SlimDrawString8(XftDraw *d, XftColor *color, XftFont *font,
                             int xOffset, int yOffset)
 {
     if (xOffset && yOffset) {
-        XftDrawString8(d, shadowColor, font, x+xOffset, y+yOffset,
+        XftDrawStringUtf8(d, shadowColor, font, x+xOffset, y+yOffset,
                        reinterpret_cast<const FcChar8*>(str.c_str()), str.length());
     }
-    XftDrawString8(d, color, font, x, y, reinterpret_cast<const FcChar8*>(str.c_str()), str.length());
+    XftDrawStringUtf8(d, color, font, x, y, reinterpret_cast<const FcChar8*>(str.c_str()), str.length());
 }
 
 Panel::ActionType Panel::getAction(void) const{
