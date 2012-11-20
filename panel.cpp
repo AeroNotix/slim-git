@@ -54,7 +54,7 @@ Panel::Panel(Display* dpy, int scr, Window root, Cfg* config, const string& them
     XftColorAllocName(Dpy, DefaultVisual(Dpy, Scr), colormap,
                       cfg->getOption("session_shadow_color").c_str(), &sessionshadowcolor);
 
-    if (input_pass.x < 0 || input_pass.y < 0){ // single inputbox mode
+    if (input_pass.x < 0 || input_pass.y < 0) { // single inputbox mode
         input_pass.x = input_name.x;
         input_pass.y = input_name.y;
     }
