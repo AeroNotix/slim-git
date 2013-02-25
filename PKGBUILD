@@ -15,7 +15,7 @@ source=('slim.service')
 md5sums=('a5d6bde9e63899df7d2081e1585bbe54')
 
 _gitroot="git://github.com/AeroNotix/slim-git.git"
-_gitname="cower"
+_gitname="slim"
 
 build() {
   msg "Connecting to GIT server...."
@@ -34,8 +34,7 @@ build() {
   cp -r "$srcdir/$_gitname" "$srcdir/$_gitname-build"
   cd "$srcdir/$_gitname-build"
   
-  # Add PAM support.
-  #cmake .. -DUSE_PAM=yes #PAM
+  #cmake .. -DUSE_PAM=yes #PAM support
   cmake .
 }
 
