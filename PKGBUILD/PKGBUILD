@@ -1,7 +1,7 @@
 # Maintainer: Federico Cinelli <cinelli.federico@gmail.com>
 
 pkgname=slim-git
-pkgver=20121218
+pkgver=20130224
 pkgrel=1
 pkgdesc="Desktop-independent graphical login manager for X11. Latest git pull"
 arch=('any')
