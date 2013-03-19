@@ -2,7 +2,7 @@
 
 pkgname=slim-git
 pkgver=20121218
-pkgrel=1
+pkgrel=2
 pkgdesc="Desktop-independent graphical login manager for X11. Latest git pull"
 arch=('any')
 url="http://github.com/AeroNotix/slim-git"
@@ -15,7 +15,7 @@ source=('slim.service')
 md5sums=('21fdfb0641396b01431ce67db96cd00e')
 
 _gitroot="git://github.com/AeroNotix/slim-git.git"
-_gitname="cower"
+_gitname="slim"
 
 build() {
   msg "Connecting to GIT server...."
@@ -34,8 +34,7 @@ build() {
   cp -r "$srcdir/$_gitname" "$srcdir/$_gitname-build"
   cd "$srcdir/$_gitname-build"
   
-  #cmake .. -DUSE_PAM=yes #PAM support
-  cmake .
+  cmake . # -DUSE_PAM=yes # Uncomment for PAM support
 }
 
 package() {
