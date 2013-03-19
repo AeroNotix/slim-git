@@ -12,7 +12,7 @@ makedepends=('git' 'cmake')
 conflicts=('slim')
 provides=('slim')
 source=('slim.service')
-md5sums=('a5d6bde9e63899df7d2081e1585bbe54')
+md5sums=('21fdfb0641396b01431ce67db96cd00e')
 
 _gitroot="git://github.com/AeroNotix/slim-git.git"
 _gitname="cower"
